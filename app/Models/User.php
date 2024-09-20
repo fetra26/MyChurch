@@ -18,6 +18,12 @@ class User extends Authenticatable
     use Notifiable;
     use TwoFactorAuthenticatable;
 
+    //Roles : 
+
+    const ROLE_USER= 0;
+    const ROLE_ADMIN = 1;
+    const ROLE_SUPER_ADMIN = 2;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -61,5 +67,13 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+        /**
+     * Check if the user has a specific role.
+     */
+    public function hasRole(int $role): bool
+    {
+        return $this->role === $role;
     }
 }
