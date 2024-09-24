@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Type extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'libelleType'
+    ];
+    public function eglises(): HasMany
+    {
+        return $this->hasMany(Eglise::class,'id_type');
+    }
 }

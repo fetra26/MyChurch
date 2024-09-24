@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class ServiceMembre extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'dateDebutServ',
+        'dateFinServ',
+        'id_membre',
+        'id_serv',
+    ];
 }
