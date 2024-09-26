@@ -4,14 +4,43 @@ namespace App\Http\Controllers;
 
 use App\Models\Status;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class StatusController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+     
+        if ($request->ajax()) {
+  
+            $data = Status::latest()->get();
+  
+            return DataTables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('action', function($row){
+   
+                           $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Modifier" class="edit btn btn-warning btn-sm editStatus">Modifier</a>';
+   
+                           $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Supprimer" class="btn btn-danger btn-sm deleteStatus">Supprimer</a>';
+    
+                            return $btn;
+                    })
+                    ->editColumn('libelleStat', function($row) {
+                        return ucfirst($row->libelleStat);
+                    }) ->editColumn('created_at', function($row) {
+                        return date('d/m/Y H:i', strtotime($row->created_at));
+                    })
+                    ->editColumn('updated_at', function($row) {
+                        return date('d/m/Y H:i', strtotime($row->updated_at));
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+        }
+        
+        return view('status.show');
     }
 
     /**
@@ -27,7 +56,21 @@ class StatusController extends Controller
      */
     public function store(Request $request)
     {
-        //
+            Status::updateOrCreate([
+    
+                        'id' => $request->status_id
+    
+                    ],
+    
+                    [
+    
+                        'libelleStat' => $request->libelleStat
+    
+                    ]);        
+    
+         
+    
+            return response()->json(['success'=>'Statut enregistré avec succès']);
     }
 
     /**
@@ -41,9 +84,11 @@ class StatusController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Status $status)
+    public function edit($id)
     {
-        //
+        $status = Status::find($id);
+
+        return response()->json($status);
     }
 
     /**
@@ -57,8 +102,9 @@ class StatusController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Status $status)
+    public function destroy($id)
     {
-        //
+        Status::find($id)->delete();
+        return response()->json(['success'=>'Statut supprimé avec succès.']);
     }
 }

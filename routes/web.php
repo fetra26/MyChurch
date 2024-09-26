@@ -18,3 +18,4 @@ Route::middleware([
     })->name('dashboard');
 });
 Route::get('redirect',[DashboardController::class, 'redirect']);
+Route::resource('status', StatusController::class);
