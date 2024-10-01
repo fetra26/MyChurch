@@ -18,6 +18,19 @@
                     <x-nav-link href="{{ route('status.index') }}" :active="request()->routeIs('status.index')">
                         {{ __('Statut') }}
                     </x-nav-link>
+                    <x-nav-link href="{{ route('service.index') }}" :active="request()->routeIs('service.index')">
+                        {{ __('Service') }}
+                    </x-nav-link>
+                    <x-nav-link href="{{ route('type.index') }}" :active="request()->routeIs('type.index')">
+                        {{ __('Type') }}
+                    </x-nav-link>
+                    <x-nav-link href="{{ route('mission.index') }}" :active="request()->routeIs('mission.index')">
+                        {{ __('Mission') }}
+                    </x-nav-link>
+                    <x-nav-link href="{{ route('federation.index') }}" :active="request()->routeIs('federation.index')">
+                        {{ __('Federation') }}
+                    </x-nav-link>
+
                 </div>
             </div>
 

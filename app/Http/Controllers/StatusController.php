@@ -13,19 +13,19 @@ class StatusController extends Controller
      */
     public function index(Request $request)
     {
-     
+
         if ($request->ajax()) {
-  
+
             $data = Status::latest()->get();
-  
+
             return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('action', function($row){
-   
-                           $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Modifier" class="edit btn btn-warning btn-sm editStatus">Modifier</a>';
-   
-                           $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Supprimer" class="btn btn-danger btn-sm deleteStatus">Supprimer</a>';
-    
+
+                           $btn = '<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Modifier" class="edit btn btn-warning btn-sm editStatus"><i class="fa fa-pencil text-white"></i></a>';
+
+                           $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Supprimer" class="btn btn-danger btn-sm deleteStatus"><i class="fa fa-trash"></i></a>';
+
                             return $btn;
                     })
                     ->editColumn('libelleStat', function($row) {
@@ -39,7 +39,7 @@ class StatusController extends Controller
                     ->rawColumns(['action'])
                     ->make(true);
         }
-        
+
         return view('status.show');
     }
 
@@ -57,19 +57,19 @@ class StatusController extends Controller
     public function store(Request $request)
     {
             Status::updateOrCreate([
-    
+
                         'id' => $request->status_id
-    
+
                     ],
-    
+
                     [
-    
+
                         'libelleStat' => $request->libelleStat
-    
-                    ]);        
-    
-         
-    
+
+                    ]);
+
+
+
             return response()->json(['success'=>'Statut enregistré avec succès']);
     }
 
