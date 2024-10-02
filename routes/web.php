@@ -17,9 +17,7 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard',[DashboardController::class, 'redirect'])->name('dashboard');
 });
 Route::get('redirect',[DashboardController::class, 'redirect']);
 Route::resource('status', StatusController::class);

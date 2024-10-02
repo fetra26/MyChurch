@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Status;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 
 class StatusController extends Controller
@@ -13,31 +15,36 @@ class StatusController extends Controller
      */
     public function index(Request $request)
     {
-
-        if ($request->ajax()) {
-
-            $data = Status::latest()->get();
-
-            return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('action', function($row){
-
-                           $btn = '<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Modifier" class="edit btn btn-warning btn-sm editStatus"><i class="fa fa-pencil text-white"></i></a>';
-
-                           $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Supprimer" class="btn btn-danger btn-sm deleteStatus"><i class="fa fa-trash"></i></a>';
-
-                            return $btn;
-                    })
-                    ->editColumn('libelleStat', function($row) {
-                        return ucfirst($row->libelleStat);
-                    }) ->editColumn('created_at', function($row) {
-                        return date('d/m/Y H:i', strtotime($row->created_at));
-                    })
-                    ->editColumn('updated_at', function($row) {
-                        return date('d/m/Y H:i', strtotime($row->updated_at));
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
+        $currentUser = Auth::user();
+        
+        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+            if ($request->ajax()) {
+    
+                $data = Status::latest()->get();
+    
+                return DataTables::of($data)
+                        ->addIndexColumn()
+                        ->addColumn('action', function($row){
+    
+                               $btn = '<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Modifier" class="edit btn btn-warning btn-sm editStatus"><i class="fa fa-pencil text-white"></i></a>';
+    
+                               $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Supprimer" class="btn btn-danger btn-sm deleteStatus"><i class="fa fa-trash"></i></a>';
+    
+                                return $btn;
+                        })
+                        ->editColumn('libelleStat', function($row) {
+                            return ucfirst($row->libelleStat);
+                        }) ->editColumn('created_at', function($row) {
+                            return date('d/m/Y H:i', strtotime($row->created_at));
+                        })
+                        ->editColumn('updated_at', function($row) {
+                            return date('d/m/Y H:i', strtotime($row->updated_at));
+                        })
+                        ->rawColumns(['action'])
+                        ->make(true);
+            }
+        }else {
+            return redirect('dashboard');
         }
 
         return view('status.show');
@@ -56,6 +63,9 @@ class StatusController extends Controller
      */
     public function store(Request $request)
     {
+        $currentUser = Auth::user();
+        
+        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             Status::updateOrCreate([
 
                         'id' => $request->status_id
@@ -71,6 +81,10 @@ class StatusController extends Controller
 
 
             return response()->json(['success'=>'Statut enregistré avec succès']);
+            
+        }else {
+            return redirect('dashboard');
+        }
     }
 
     /**
@@ -78,7 +92,13 @@ class StatusController extends Controller
      */
     public function show(Status $status)
     {
-        //
+        $currentUser = Auth::user();
+        
+        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+
+        }else {
+            return redirect('dashboard');
+        }
     }
 
     /**
@@ -86,9 +106,16 @@ class StatusController extends Controller
      */
     public function edit($id)
     {
-        $status = Status::find($id);
+        $currentUser = Auth::user();
+        
+            if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+            $status = Status::find($id);
 
-        return response()->json($status);
+            return response()->json($status);
+        
+        }else {
+            return redirect('dashboard');
+        }
     }
 
     /**
@@ -104,7 +131,14 @@ class StatusController extends Controller
      */
     public function destroy($id)
     {
-        Status::find($id)->delete();
-        return response()->json(['success'=>'Statut supprimé avec succès.']);
+        $currentUser = Auth::user();
+            
+            if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+            Status::find($id)->delete();
+            return response()->json(['success'=>'Statut supprimé avec succès.']);
+            
+        }else {
+            return redirect('dashboard');
+        }
     }
 }

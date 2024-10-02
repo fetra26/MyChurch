@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Service;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 class ServiceController extends Controller
 {
@@ -12,33 +14,40 @@ class ServiceController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
+        $currentUser = Auth::user();
+        
+        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        
+            if ($request->ajax()) {
 
-            $data = Service::latest()->get();
+                $data = Service::latest()->get();
 
-            return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('action', function($row){
+                return DataTables::of($data)
+                        ->addIndexColumn()
+                        ->addColumn('action', function($row){
 
-                           $btn = '<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Modifier" class="edit btn btn-warning btn-sm editService"><i class="fa fa-pencil text-white"></i></a>';
+                            $btn = '<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Modifier" class="edit btn btn-warning btn-sm editService"><i class="fa fa-pencil text-white"></i></a>';
 
-                           $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" dtitle="Supprimer" class="btn btn-danger btn-sm deleteService" id="deleteService"><i class="fa fa-trash"></i></a>';
+                            $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" dtitle="Supprimer" class="btn btn-danger btn-sm deleteService" id="deleteService"><i class="fa fa-trash"></i></a>';
 
-                            return $btn;
-                    })
-                    ->editColumn('libelleServ', function($row) {
-                        return ucfirst($row->libelleServ);
-                    }) ->editColumn('created_at', function($row) {
-                        return date('d/m/Y H:i', strtotime($row->created_at));
-                    })
-                    ->editColumn('updated_at', function($row) {
-                        return date('d/m/Y H:i', strtotime($row->updated_at));
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
+                                return $btn;
+                        })
+                        ->editColumn('libelleServ', function($row) {
+                            return ucfirst($row->libelleServ);
+                        }) ->editColumn('created_at', function($row) {
+                            return date('d/m/Y H:i', strtotime($row->created_at));
+                        })
+                        ->editColumn('updated_at', function($row) {
+                            return date('d/m/Y H:i', strtotime($row->updated_at));
+                        })
+                        ->rawColumns(['action'])
+                        ->make(true);
+            }
+
+            return view('services.show');
+        }else {
+            return redirect('dashboard');
         }
-
-        return view('services.show');
     }
 
     /**
@@ -54,22 +63,25 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
-        $service = Service::updateOrCreate([
+        $currentUser = Auth::user();
+        
+        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        
+            $service = Service::updateOrCreate([
 
-            'id' => $request->service_id
+                'id' => $request->service_id
 
-        ],
+            ],
 
-        [
+            [
 
-            'libelleServ' => $request->libelleServ
+                'libelleServ' => $request->libelleServ
 
-        ]);
-
-        // dd($service);
-
-
+            ]);
             return response()->json(['success'=>'Service enregistré avec succès']);
+        }else {
+            return redirect('dashboard');
+        }
     }
 
     /**
@@ -77,7 +89,13 @@ class ServiceController extends Controller
      */
     public function show(Service $service)
     {
-        //
+        $currentUser = Auth::user();
+        
+        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        
+        }else {
+            return redirect('dashboard');
+        }
     }
 
     /**
@@ -85,9 +103,16 @@ class ServiceController extends Controller
      */
     public function edit($id)
     {
-        $service = Service::find($id);
+        $currentUser = Auth::user();
+        
+        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+            
+            $service = Service::find($id);
 
-        return response()->json($service);
+            return response()->json($service);
+        }else {
+            return redirect('dashboard');
+        }
     }
 
     /**
@@ -103,7 +128,14 @@ class ServiceController extends Controller
      */
     public function destroy($id)
     {
-        Service::find($id)->delete();
-        return response()->json(['success'=>'Service supprimé avec succès.']);
+       $currentUser = Auth::user();
+        
+        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+            
+            Service::find($id)->delete();
+            return response()->json(['success'=>'Service supprimé avec succès.']);
+        }else {
+            return redirect('dashboard');
+        }
     }
 }
