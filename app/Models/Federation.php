@@ -12,9 +12,9 @@ class Federation extends Model
         'nomFed',
         'id_cont',
     ];
-    public function contact(): BelongsTo
+    public function contact()
     {
-        return $this->belongsTo(Contact::class);
+        return $this->belongsTo(Contact::class,'id_cont');
     }
     public function federations(): HasMany
     {
