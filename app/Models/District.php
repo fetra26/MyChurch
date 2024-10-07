@@ -17,13 +17,13 @@ class District extends Model
     {
         return $this->hasMany(Eglise::class,'id_dist');
     }
-    public function mission(): BelongsTo
+    public function mission()
     {
-        return $this->belongsTo(Mission::class);
+        return $this->belongsTo(Mission::class,'id_miss');
     }
-    public function federation(): BelongsTo
+    public function federation()
     {
-        return $this->belongsTo(Federation::class);
+        return $this->belongsTo(Federation::class,'id_fed');
     }
 
     public function pasteurs(): BelongsToMany

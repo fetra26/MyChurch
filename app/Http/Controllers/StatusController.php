@@ -43,11 +43,11 @@ class StatusController extends Controller
                         ->rawColumns(['action'])
                         ->make(true);
             }
+            return view('status.show');
         }else {
             return redirect('dashboard');
         }
 
-        return view('status.show');
     }
 
     /**
