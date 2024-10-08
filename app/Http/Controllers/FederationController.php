@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Contact;
+use App\Models\District;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Federation;
 use App\Models\User;
@@ -30,8 +31,9 @@ class FederationController extends Controller
                             $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Modifier" class="edit btn btn-warning btn-sm editFederation"><i class="fa fa-pencil text-white"></i></a>';
 
                             $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Supprimer" class="btn btn-danger btn-sm deleteFederation"><i class="fa fa-trash"></i></a>';
+                            $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Ajouter un district" class="btn btn-dark btn-sm addDistrict"><i class="fa fa-plus text-white"></i></a>';
 
-                                return $btn;
+                            return $btn;
                         })
                         ->editColumn('nomFed', function($row) {
                             return ucfirst($row->nomFed);
@@ -168,6 +170,43 @@ class FederationController extends Controller
             $federation->delete();
             $contact->delete();
             return response()->json(['success'=>'Federation supprimée avec succès.']);
+        }else {
+            return redirect('dashboard');
+        }
+    }
+
+     /**
+     * Store a newly created resource in storage.
+     */
+    public function addDistrict($id)
+    {
+        $currentUser = Auth::user();
+        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        
+            $federation = Federation::with('contact')->find($id);
+            return response()->json($federation);
+        }else {
+            return redirect('dashboard');
+        }
+    }
+
+    
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function storeDistrict(Request $request)
+    {
+        $currentUser = Auth::user();
+        
+        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+            // dd($request);
+            $district = new District(['nomDist' => $request->nomDist]);
+ 
+            $federation = Federation::find($request->federation_id);
+            
+            $federation->districts()->save($district);
+
+            return response()->json(['success'=>'District enregistré avec succès']);
         }else {
             return redirect('dashboard');
         }

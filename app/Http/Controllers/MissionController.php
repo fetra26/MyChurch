@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Mission;
 use App\Models\Contact;
+use App\Models\District;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,10 +31,10 @@ class MissionController extends Controller
 
                             $btn = '<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Details" class="details btn btn-info btn-sm showMission"><i class="fa fa-eye text-white"></i></a>';
                             $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Modifier" class="edit btn btn-warning btn-sm editMission"><i class="fa fa-pencil text-white"></i></a>';
-
                             $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Supprimer" class="btn btn-danger btn-sm deleteMission"><i class="fa fa-trash"></i></a>';
-
-                                return $btn;
+                            $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Ajouter un district" class="btn btn-dark btn-sm addDistrict"><i class="fa fa-plus text-white"></i></a>';
+                            
+                            return $btn;
                         })
                         ->editColumn('nomMiss', function($row) {
                             return ucfirst($row->nomMiss);
@@ -169,6 +170,44 @@ class MissionController extends Controller
             $mission->delete();
             $contact->delete();
             return response()->json(['success'=>'Mission supprimée avec succès.']);
+        }else {
+            return redirect('dashboard');
+        }
+    }
+
+    
+     /**
+     * Store a newly created resource in storage.
+     */
+    public function addDistrict($id)
+    {
+        $currentUser = Auth::user();
+        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        
+            $mission = Mission::with('contact')->find($id);
+            return response()->json($mission);
+        }else {
+            return redirect('dashboard');
+        }
+    }
+
+    
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function storeDistrict(Request $request)
+    {
+        $currentUser = Auth::user();
+        
+        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+            // dd($request);
+            $district = new District(['nomDist' => $request->nomDist]);
+ 
+            $mission = Mission::find($request->mission_id);
+            
+            $mission->districts()->save($district);
+
+            return response()->json(['success'=>'District enregistré avec succès']);
         }else {
             return redirect('dashboard');
         }

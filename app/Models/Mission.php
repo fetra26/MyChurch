@@ -16,7 +16,7 @@ class Mission extends Model
     {
         return $this->belongsTo(Contact::class,'id_cont');
     }
-    public function districts(): HasMany
+    public function districts()
     {
         return $this->hasMany(District::class,'id_miss');
     }

@@ -16,8 +16,8 @@ class Federation extends Model
     {
         return $this->belongsTo(Contact::class,'id_cont');
     }
-    public function federations(): HasMany
+    public function districts()
     {
-        return $this->hasMany(Federation::class,'id_fed');
+        return $this->hasMany(District::class,'id_fed');
     }
 }
