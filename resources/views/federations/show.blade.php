@@ -106,6 +106,46 @@
         </div>
     </div>
 
+    <div class="modal fade" id="districtModel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modelHeadingDist"></h4>
+                </div>
+                <div class="modal-body">
+                    <form id="districtFedForm" name="districtFedForm" class="form-horizontal">
+                       <input type="hidden" name="federation_id" id="federation_id_dist">
+                       @csrf
+
+                        <div class="alert alert-danger print-error-msg" style="display:none">
+                            <ul></ul>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nomFed" class="col-sm control-label">Nom de la federation:</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="nomFedDist" name="nomFed" value="" maxlength="50" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="nomDist" class="col-sm control-label">Nom du district:</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="nomDist" name="nomDist" value="" maxlength="50">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success mt-2" id="saveBtnDist" value="create"> Enregistrer
+                        </button>
+                        <button type="button" class="btn btn-danger mt-2 close" data-bs-dismiss="modal"> Annuler
+                        </button>
+                    </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="showModel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -199,6 +239,9 @@
             $('#ajaxModel').modal('show');
         });
 
+        $('#ajaxModel').on('hidden.bs.modal', function () {
+            $('.print-error-msg').hide();
+        })
         /*------------------------------------------
         --------------------------------------------
         Click to Edit Button
@@ -207,8 +250,6 @@
         $('body').on('click', '.showFederation', function () {
           var federation_id = $(this).data('id');
           $.get("{{ route('federation.index') }}" +'/' + federation_id, function (data) {
-
-
             $('.nomFed').text(data.nomFed);
             $('.adresse').text(data.contact.adresse);
             $('.email').text(data.contact.email);
@@ -222,6 +263,21 @@
 
         /*------------------------------------------
         --------------------------------------------
+        Click to add disctrict Button
+        --------------------------------------------
+        --------------------------------------------*/
+        $('body').on('click', '.addDistrict', function () {
+          var federation_id = $(this).data('id');
+          $.get("{{ route('federation.index') }}" +'/' + federation_id +'/addDistrict', function (data) {
+              $('#modelHeadingDist').html(" Ajouter un district à cette Federation");
+              $('#saveBtnDist').val("add-district-federation");
+              $('#districtModel').modal('show');
+              $('#federation_id_dist').val(data.id);
+              $('#nomFedDist').val(data.nomFed);
+          })
+        });
+        /*------------------------------------------
+        --------------------------------------------
         Click to Edit Button
         --------------------------------------------
         --------------------------------------------*/
@@ -232,7 +288,6 @@
               $('#saveBtn').val("edit-federation");
               $('#ajaxModel').modal('show');
               $('#federation_id').val(data.id);
-              console.log(data.contact);
               $('#contact_id').val(data.contact.id);
               $('#nomFed').val(data.nomFed);
               $('#adresse').val(data.contact.adresse);
@@ -279,6 +334,45 @@
                         $('#federationForm').find(".print-error-msg").css('display','block');
                         $.each( response.responseJSON.errors, function( key, value ) {
                             $('#federationForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
+                        });
+                    }
+               });
+
+        });
+        /*------------------------------------------
+        --------------------------------------------
+        Create district - federation Code
+        --------------------------------------------
+        --------------------------------------------*/
+        $('#districtFedForm').submit(function(e) {
+            e.preventDefault();
+
+            let formData = new FormData(this);
+            console.log(formData);
+            
+            $('#saveBtnDist').html('En cours...');
+
+            $.ajax({
+                    type:'POST',
+                    url: "{{ route('federation.storeDistrict') }}",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: (response) => {
+                          $('#saveBtnDist').html('Enregistrer');
+                          $('#districtFedForm').trigger("reset");
+                          $('#districtModel').modal('hide');
+                          msg = 'District ajouté à cette federation avec succès.';
+                          $(".alert-success-text").text(msg);
+                          $(".alert-success").show();
+                          table.draw();
+                    },
+                    error: function(response){
+                        $('#saveBtnDist').html('Enregistrer');
+                        $('#districtFedForm').find(".print-error-msg").find("ul").html('');
+                        $('#districtFedForm').find(".print-error-msg").css('display','block');
+                        $.each( response.responseJSON.errors, function( key, value ) {
+                            $('#districtFedForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
                         });
                     }
                });
