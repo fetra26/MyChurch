@@ -78,7 +78,6 @@ class DistrictController extends Controller
         $currentUser = Auth::user();
 
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
-            dd($request);
             $request->validate([
                 'federation_id' => 'nullable|exists:federations,id',
                 'mission_id' => 'nullable|exists:missions,id',
@@ -89,7 +88,10 @@ class DistrictController extends Controller
 
             // Ensure that only one of them is provided
             if ($request->federation_id && $request->mission_id) {
-                return redirect()->back()->withErrors("Vous pouvez seulement choisir l'une d'entre federation et mission.");
+                return response()->json(['error'=>"Vous pouvez seulement choisir l'une des fédérations ou des missions."],400);
+            }            
+            if (!$request->federation_id && !$request->mission_id) {
+                return response()->json(['error'=>"Veuillez choisir l'une des fédérations ou des missions."],400);
             }
             $federation = null;
             $mission = null;
@@ -130,7 +132,7 @@ class DistrictController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(District $district)
+    public function show($id)
     {
         $currentUser = Auth::user();
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {

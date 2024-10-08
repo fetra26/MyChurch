@@ -45,9 +45,11 @@
                         <input type="hidden" name="district_id" id="district_id">
                         @csrf
 
-                        <div class="alert alert-danger print-error-msg" style="display:none">
-                            <ul></ul>
-                        </div>
+                            <div class="alert alert-danger align-items-center print-error-msg" role="alert" style="display:none">
+                                <div>
+                                </div>
+                            </div>
+
 
                         <div class="form-group">
                             <label for="nomDist" class="col-sm control-label">Nom du district:</label>
@@ -63,7 +65,7 @@
                         </center>
                         <div class="form-group mt-2" id="fedSelect" style="display:none;">
                             <select class="form-select mt-1" aria-label="Default select example" id="federation_id" name="federation_id">
-                                <option selected>Choisir la federation</option>
+                                <option selected value="">Choisir la federation</option>
                                 @forelse ($federations as $fed)
                                     <option value="{{$fed->id}}">{{$fed->nomFed}}</option>
                                 @empty
@@ -206,6 +208,7 @@
         $('#ajaxModel').on('hidden.bs.modal', function () {
             $('#fedSelect').slideUp();
             $('#missSelect').slideUp();
+            $('.print-error-msg').hide();
         })
         /*------------------------------------------
         --------------------------------------------
@@ -215,8 +218,6 @@
         $('body').on('click', '.showDistrict', function () {
           var district_id = $(this).data('id');
           $.get("{{ route('district.index') }}" +'/' + district_id, function (data) {
-
-
             $('.nomDist').text(data.nomDist);
             $('.federation_id').text(data.contact.federation_id);
             $('.mission_id').text(data.contact.mission_id);
@@ -267,17 +268,26 @@
         --------------------------------------------*/
         $('#districtForm').submit(function(e) {
             e.preventDefault();
-            if(!$('#missSelect').is(':visible')){
-                console.log($('#missSelect').val());
-
-                $('#missSelect').val('');
-            }else if (!$('#fedSelect').is(':visible')) {
-                console.log($('#fedSelect').val());
-                $('#fedSelect').val('');
-            }
-            // console.log(this);
-
+            
             let formData = new FormData(this);
+            if ($("#saveBtn").val() == 'edit-district') {
+                if ($('#missSelect').is(':hidden') && ($('#federation_id').val() !== '')) {
+                    delete formData.append('mission_id', ''); // Remove if hidden
+                }
+    
+                if ($('#fedSelect').is(':hidden') && ($('#mission_id').val() !== '')) {
+                    delete formData.append('federation_id', ''); // Remove if hidden
+                }
+            }else{
+                if ($('#missSelect').is(':hidden')) {
+                    delete formData.append('mission_id', ''); // Remove if hidden
+                }
+    
+                if ($('#fedSelect').is(':hidden')) {
+                    delete formData.append('federation_id', ''); // Remove if hidden
+                }
+            }
+
             $('#saveBtn').html('En cours...');
 
             $.ajax({
@@ -300,11 +310,9 @@
                     },
                     error: function(response){
                         $('#saveBtn').html('Enregistrer');
-                        $('#districtForm').find(".print-error-msg").find("ul").html('');
+                        $('#districtForm').find(".print-error-msg").find("div").html('');
                         $('#districtForm').find(".print-error-msg").css('display','block');
-                        $.each( response.responseJSON.errors, function( key, value ) {
-                            $('#districtForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
-                        });
+                            $('#districtForm').find(".print-error-msg").find("div").text(response.responseJSON.error);
                     }
                });
 
