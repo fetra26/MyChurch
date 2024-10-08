@@ -17,19 +17,19 @@ class Contact extends Model
         'codePost',
     ];
 
-    public function eglise(): HasOne
+    public function eglise()
     {
         return $this->hasOne(Eglise::class,'id_cont');
     }
-    public function membre(): HasOne
+    public function membre()
     {
         return $this->hasOne(Membre::class,'id_cont');
     }
-    public function mission(): HasOne
+    public function mission()
     {
         return $this->hasOne(Mission::class,'id_cont');
     }
-    public function federation(): HasOne
+    public function federation()
     {
         return $this->hasOne(Federation::class,'id_cont');
     }

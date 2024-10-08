@@ -15,17 +15,17 @@ class Eglise extends Model
         'id_dist',
     ];
 
-    public function contact(): BelongsTo
+    public function contact()
     {
-        return $this->belongsTo(Contact::class);
+        return $this->belongsTo(Contact::class, 'id_cont');
     }
-    public function type(): BelongsTo
+    public function type()
     {
-        return $this->belongsTo(Type::class);
+        return $this->belongsTo(Type::class, 'id_type');
     }
-    public function district(): BelongsTo
+    public function district()
     {
-        return $this->belongsTo(District::class);
+        return $this->belongsTo(District::class, 'id_dist');
     }
     public function membres()
     {
