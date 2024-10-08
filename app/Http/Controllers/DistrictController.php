@@ -136,7 +136,8 @@ class DistrictController extends Controller
     {
         $currentUser = Auth::user();
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
-
+            $district = District::with('federation')->with('mission')->find($id);
+            return response()->json($district);
         }else {
                    return redirect('dashboard');
         }
@@ -175,7 +176,7 @@ class DistrictController extends Controller
 
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
 
-            $district = District::find($id)->delete();
+            District::find($id)->delete();
             return response()->json(['success'=>'District supprimé avec succès.']);
         }else {
             return redirect('dashboard');

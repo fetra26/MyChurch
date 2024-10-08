@@ -104,8 +104,8 @@
                 </div>
                 <div class="modal-body">
                     <p><strong>Nom du district:</strong> <span class="nomDist"></span></p>
-                    <p><strong>Federation:</strong> <span class="federation_id"></span></p>
-                    <p><strong>Mission:</strong> <span class="mission_id"></span></p>
+                    <p class="federation"><strong>Federation:</strong> <span class="federation_id"></span></p>
+                    <p class="mission"><strong>Mission:</strong> <span class="mission_id"></span></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-info mt-2 close" data-bs-dismiss="modal"> Fermer
@@ -209,6 +209,13 @@
             $('#fedSelect').slideUp();
             $('#missSelect').slideUp();
             $('.print-error-msg').hide();
+
+        })
+        $('#showModel').on('hidden.bs.modal', function () {
+            $('.nomDist').text('');
+            $('.federation_id').text('');
+            $('.mission_id').text('');
+
         })
         /*------------------------------------------
         --------------------------------------------
@@ -219,8 +226,16 @@
           var district_id = $(this).data('id');
           $.get("{{ route('district.index') }}" +'/' + district_id, function (data) {
             $('.nomDist').text(data.nomDist);
-            $('.federation_id').text(data.contact.federation_id);
-            $('.mission_id').text(data.contact.mission_id);
+            if (data.federation) {
+                $('.mission').hide();
+                $('.federation').show();
+                $('.federation_id').text(data.federation.nomFed);
+            }
+            if (data.mission) {
+                $('.federation').hide();
+                $('.mission').show();
+                $('.mission_id').text(data.mission.nomMiss);
+            }
             $('#showModel').modal('show');
           })
         });
