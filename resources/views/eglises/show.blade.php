@@ -75,13 +75,13 @@
                         <div class="form-group">
                             <label for="nomEglise" class="col-sm control-label">Nom de l' eglise:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="nomEglise" name="nomEglise" value="" maxlength="50">
+                                <input type="text" class="form-control" id="nomEglise" name="nomEglise" value="" maxlength="50" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="adresse" class="col-sm control-label">Adresse:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="adresse" name="adresse" value="" maxlength="50">
+                                <input type="text" class="form-control" id="adresse" name="adresse" value="" maxlength="50" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -151,7 +151,7 @@
                         <div class="form-group">
                             <label for="nom" class="col-sm control-label">Nom du membre:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="nom" name="nom" value="" maxlength="50">
+                                <input type="text" class="form-control" id="nom" name="nom" value="" maxlength="50" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -179,7 +179,7 @@
                         <div class="form-group">
                             <label for="adresse" class="col-sm control-label">Adresse:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="adresse" name="adresse" value="" maxlength="50">
+                                <input type="text" class="form-control" id="adresse" name="adresse" value="" maxlength="50" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -339,6 +339,9 @@
         });
 
         $('#ajaxModel').on('hidden.bs.modal', function () {
+            $('.print-error-msg').hide();
+        })
+        $('#membreModel').on('hidden.bs.modal', function () {
             $('.print-error-msg').hide();
         })
         /*------------------------------------------

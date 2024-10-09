@@ -52,7 +52,7 @@
                         <div class="form-group">
                             <label for="libelleStat" class="col-sm control-label">Libellé du statut:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="libelleStat" name="libelleStat" value="" maxlength="50">
+                                <input type="text" class="form-control" id="libelleStat" name="libelleStat" value="" maxlength="50" required>
                             </div>
                         </div>
 

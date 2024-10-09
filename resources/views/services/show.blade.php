@@ -50,7 +50,7 @@
                         <div class="form-group">
                             <label for="libelleServ" class="col-sm control-label">Libellé du service:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="libelleServ" name="libelleServ" value="" maxlength="50">
+                                <input type="text" class="form-control" id="libelleServ" name="libelleServ" value="" maxlength="50" required>
                             </div>
                         </div>
 

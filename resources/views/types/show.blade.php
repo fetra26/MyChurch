@@ -52,7 +52,7 @@
                         <div class="form-group">
                             <label for="libelleType" class="col-sm control-label">Libellé du Type:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="libelleType" name="libelleType" value="" maxlength="50">
+                                <input type="text" class="form-control" id="libelleType" name="libelleType" value="" maxlength="50" required>
                             </div>
                         </div>
 

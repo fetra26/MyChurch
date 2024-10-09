@@ -54,7 +54,7 @@
                         <div class="form-group">
                             <label for="nomDist" class="col-sm control-label">Nom du district:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="nomDist" name="nomDist" value="" maxlength="50">
+                                <input type="text" class="form-control" id="nomDist" name="nomDist" value="" maxlength="50" required>
                             </div>
                         </div>
                         <center class="mt-3">

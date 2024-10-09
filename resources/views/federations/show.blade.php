@@ -54,13 +54,13 @@
                         <div class="form-group">
                             <label for="nomFed" class="col-sm control-label">Nom de la federation:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="nomFed" name="nomFed" value="" maxlength="50">
+                                <input type="text" class="form-control" id="nomFed" name="nomFed" value="" maxlength="50" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="adresse" class="col-sm control-label">Adresse:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="adresse" name="adresse" value="" maxlength="50">
+                                <input type="text" class="form-control" id="adresse" name="adresse" value="" maxlength="50" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -130,7 +130,7 @@
                         <div class="form-group">
                             <label for="nomDist" class="col-sm control-label">Nom du district:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="nomDist" name="nomDist" value="" maxlength="50">
+                                <input type="text" class="form-control" id="nomDist" name="nomDist" value="" maxlength="50" required>
                             </div>
                         </div>
 
