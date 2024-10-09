@@ -31,7 +31,7 @@ class Membre extends Model
     }
     public function status()
     {
-        return $this->belongsTo(Status::class, 'id_status');
+        return $this->belongsTo(Status::class, 'id_stat');
     }
     public function eglise()
     {

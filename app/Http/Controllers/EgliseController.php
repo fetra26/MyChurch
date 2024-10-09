@@ -9,6 +9,7 @@ use App\Models\Membre;
 use App\Models\Status;
 use App\Models\Type;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Auth;
@@ -222,15 +223,35 @@ class EgliseController extends Controller
         $currentUser = Auth::user();
         
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
-            // // dd($request);
+
+            $contact = Contact::updateOrCreate([
+
+                'id' => $request->contact_id
+
+            ],
+
+            [
+                'adresse' => $request->adresse,
+                'email' => $request->email,
+                'telMobile' => $request->telMobile,
+                'telFixe' => $request->telFixe,
+                'BP' => $request->BP,
+                'codePost' => $request->codePost,
+
+            ]);
+            $datenais = Carbon::createFromFormat('d/m/Y', $request->datenais)->format('Y-m-d');
             $membre = new Membre([
                 'nom' => $request->nom,
                 'prenom' => $request->prenom,
                 'sexe' => $request->sexe,
-                'datenais' => $request->datenais,
+                'datenais' => $datenais,
             ]);
             $membre->contact()->associate($contact);
+
+            $status = Status::find($request->status_id);
+
             $membre->status()->associate($status);
+
             $eglise = Eglise::find($request->eglise_id);
             
             $eglise->membres()->save($membre);

@@ -162,20 +162,57 @@
                         </div>
                         <label for="">Sexe</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="sexe" id="sexe0"checked>
+                            <input class="form-check-input" type="radio" name="sexe" id="sexe0" value="0" checked>
                             <label class="form-check-label" for="sexe0">
                               Femme
                             </label>
                           </div>
                           <div class="form-check">
-                            <input class="form-check-input" type="radio" name="sexe" id="sexe1">
+                            <input class="form-check-input" type="radio" name="sexe" id="sexe1" value="1">
                             <label class="form-check-label" for="sexe1">
                               Homme
                             </label>
                           </div>
                           <label for="">Date de naissance</label>
-                        <input id="datepicker"/>
-                        
+                        <input id="datepicker" name="datenais"/>
+                        {{-- contact --}}
+                        <div class="form-group">
+                            <label for="adresse" class="col-sm control-label">Adresse:</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="adresse" name="adresse" value="" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="col-sm control-label">Email:</label>
+                            <div class="col-sm-12">
+                                <input type="email" class="form-control" id="email" name="email" value="" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="telMobile" class="col-sm control-label">Téléphone Mobile:</label>
+                            <div class="col-sm-12">
+                                <input type="tel" class="form-control" id="telMobile" name="telMobile" value="" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="telFixe" class="col-sm control-label">Téléphone fixe:</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="telFixe" name="telFixe" value="" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="BP" class="col-sm control-label">Boite postal:</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="BP" name="BP" value="" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="codePost" class="col-sm control-label">Code postal:</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="codePost" name="codePost" value="" maxlength="50">
+                            </div>
+                        </div>
+
                         <div class="form-group mt-1" id="statutSelect">
 
                             <select class="form-select mt-2 mb-2" aria-label="Default select example" id="status_id" name="status_id">
@@ -187,6 +224,7 @@
                                 @endforelse
                             </select>
                         </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success mt-2" id="saveBtnDist" value="create"> Enregistrer
