@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DistrictController;
+use App\Http\Controllers\EgliseController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TypeController;
@@ -32,3 +33,6 @@ Route::resource('federation', FederationController::class);
 Route::get('federation/{id}/addDistrict', [FederationController::class, 'addDistrict']);
 Route::post('federation/storeDistrict', [FederationController::class, 'storeDistrict'])->name('federation.storeDistrict');
 Route::resource('district', DistrictController::class);
+Route::resource('eglise', EgliseController::class);
+Route::get('eglise/{id}/addMembre', [EgliseController::class, 'addMembre']);
+Route::post('eglise/storeMembre', [EgliseController::class, 'storeMembre'])->name('eglise.storeMembre');

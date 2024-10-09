@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Federations') }}
+            {{ __('Eglises') }}
         </h2>
     </x-slot>
 
@@ -14,15 +14,15 @@
                 <strong class="alert-success-text"></strong>
             </div>
             <div class="mt-10 sm:mt-0 cd__main">
-                <a class="btn btn-primary mb-1" href="javascript:void(0)" id="createNewFederation" data-bs-toggle="tooltip" title="Nouvelle Federation"><i class="fa fa-plus"></i></a>
+                <a class="btn btn-primary mb-1" href="javascript:void(0)" id="createNewEglise" data-bs-toggle="tooltip" title="Nouvelle Eglise"><i class="fa fa-plus"></i></a>
                 <table class="table table-stripped data-table" style="width:100%">
                     <thead>
                         <tr>
                             <th>N°</th>
                             <th>Nom</th>
+                            <th>Type</th>
                             <th>Adresse</th>
-                            <th>E-mail</th>
-                            <th>Téléphone</th>
+                            <th>District</th>
                             <th>Date de création</th>
                             <th>Dernière modification</th>
                             <th>Actions</th>
@@ -42,8 +42,8 @@
                     <h4 class="modal-title" id="modelHeading"></h4>
                 </div>
                 <div class="modal-body">
-                    <form id="federationForm" name="federationForm" class="form-horizontal">
-                       <input type="hidden" name="federation_id" id="federation_id">
+                    <form id="egliseForm" name="egliseForm" class="form-horizontal">
+                       <input type="hidden" name="eglise_id" id="eglise_id">
                        <input type="hidden" name="contact_id" id="contact_id">
                        @csrf
 
@@ -51,10 +51,31 @@
                             <ul></ul>
                         </div>
 
+                        <div class="form-group mt-2" id="DistSelect">
+                            <select class="form-select mt-1" aria-label="Default select example" id="district_id" name="district_id">
+                                <option selected value="">Choisir le district</option>
+                                @forelse ($districts as $dist)
+                                    <option value="{{$dist->id}}">{{$dist->nomDist}}</option>
+                                @empty
+
+                                @endforelse
+                            </select>
+                        </div>
+                        <div class="form-group mt-1" id="typeSelect">
+
+                            <select class="form-select mt-2 mb-2" aria-label="Default select example" id="type_id" name="type_id">
+                                <option selected value="">Choisir le type</option>
+                                @forelse ($types as $type)
+                                    <option value="{{$type->id}}">{{$type->libelleType}}</option>
+                                @empty
+
+                                @endforelse
+                            </select>
+                        </div>
                         <div class="form-group">
-                            <label for="nomFed" class="col-sm control-label">Nom de la federation:</label>
+                            <label for="nomEglise" class="col-sm control-label">Nom de l' eglise:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="nomFed" name="nomFed" value="" maxlength="50" required>
+                                <input type="text" class="form-control" id="nomEglise" name="nomEglise" value="" maxlength="50" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -106,15 +127,15 @@
         </div>
     </div>
 
-    <div class="modal fade" id="districtModel" aria-hidden="true">
+    <div class="modal fade" id="membreModel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="modelHeadingDist"></h4>
                 </div>
                 <div class="modal-body">
-                    <form id="districtFedForm" name="districtFedForm" class="form-horizontal">
-                       <input type="hidden" name="federation_id" id="federation_id_dist">
+                    <form id="membreEgliseForm" name="membreEgliseForm" class="form-horizontal">
+                       <input type="hidden" name="eglise_id" id="eglise_id_dist">
                        @csrf
 
                         <div class="alert alert-danger print-error-msg" style="display:none">
@@ -122,16 +143,86 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="nomFed" class="col-sm control-label">Nom de la federation:</label>
+                            <label for="nomEglise" class="col-sm control-label">Nom de l' eglise:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="nomFedDist" name="nomFed" value="" maxlength="50" disabled>
+                                <input type="text" class="form-control" id="nomEgliseDist" name="nomEglise" value="" maxlength="50" disabled>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="nomDist" class="col-sm control-label">Nom du district:</label>
+                            <label for="nom" class="col-sm control-label">Nom du membre:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="nomDist" name="nomDist" value="" maxlength="50" required>
+                                <input type="text" class="form-control" id="nom" name="nom" value="" maxlength="50" required>
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="prenom" class="col-sm control-label">Prénoms du membre:</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="prenom" name="prenom" value="" maxlength="50">
+                            </div>
+                        </div>
+                        <label for="">Sexe</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="sexe" id="sexe0" value="0" checked>
+                            <label class="form-check-label" for="sexe0">
+                              Femme
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="sexe" id="sexe1" value="1">
+                            <label class="form-check-label" for="sexe1">
+                              Homme
+                            </label>
+                          </div>
+                          <label for="">Date de naissance</label>
+                        <input id="datepicker" name="datenais"/>
+                        {{-- contact --}}
+                        <div class="form-group">
+                            <label for="adresse" class="col-sm control-label">Adresse:</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="adresse" name="adresse" value="" maxlength="50" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="col-sm control-label">Email:</label>
+                            <div class="col-sm-12">
+                                <input type="email" class="form-control" id="email" name="email" value="" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="telMobile" class="col-sm control-label">Téléphone Mobile:</label>
+                            <div class="col-sm-12">
+                                <input type="tel" class="form-control" id="telMobile" name="telMobile" value="" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="telFixe" class="col-sm control-label">Téléphone fixe:</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="telFixe" name="telFixe" value="" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="BP" class="col-sm control-label">Boite postal:</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="BP" name="BP" value="" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="codePost" class="col-sm control-label">Code postal:</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="codePost" name="codePost" value="" maxlength="50">
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-1" id="statutSelect">
+
+                            <select class="form-select mt-2 mb-2" aria-label="Default select example" id="status_id" name="status_id">
+                                <option selected value="">Choisir le statut</option>
+                                @forelse ($status as $statu)
+                                    <option value="{{$statu->id}}">{{$statu->libelleStat}}</option>
+                                @empty
+
+                                @endforelse
+                            </select>
                         </div>
 
                     </div>
@@ -153,7 +244,10 @@
                     <h4 class="modal-title" id="modelHeading"> Details</h4>
                 </div>
                 <div class="modal-body">
-                    <p><strong>Nom de la federation:</strong> <span class="nomFed"></span></p>
+                    <p class="nomDist"><strong>District:</strong> <span class="district_id"></span></p>
+                    <p class="libelleType"><strong>Type:</strong> <span class="type_id"></span></p>
+                
+                    <p><strong>Nom de l' eglise:</strong> <span class="nomEglise"></span></p>
                     <p><strong>Adresse:</strong> <span class="adresse"></span></p>
                     <p><strong>Email:</strong> <span class="email"></span></p>
                     <p><strong>Téléphone Mobile:</strong> <span class="telMobile"></span></p>
@@ -179,7 +273,7 @@
                     <p><strong id="deleteText"></strong></p>
                 </div>
                 <div class="modal-footer">
-                    <input type="hidden" name="federation_id" id="federation_id">
+                    <input type="hidden" name="eglise_id" id="eglise_id">
                     <button type="submit" class="btn btn-danger mt-2" id="deleteBtn" value="delete"> Oui
                     </button>
                     <button type="button" class="btn btn-info mt-2 close" data-bs-dismiss="modal"> Non
@@ -190,6 +284,11 @@
     </div>
     <script>
         $(document).ready(function() {
+            $('#datepicker').datepicker({
+                uiLibrary: 'bootstrap5',
+                locale: 'fr-fr',
+                format: 'dd/mm/yyyy'
+            });
      /*------------------------------------------
          --------------------------------------------
          Pass Header Token
@@ -212,13 +311,13 @@
             },
             processing: true,
             serverSide: true,
-            ajax: "{{ route('federation.index') }}",
+            ajax: "{{ route('eglise.index') }}",
             columns: [
                 {data: 'id', name: 'id'},
-                {data: 'nomFed', name: 'nomFed'},
+                {data: 'nomEglise', name: 'nomEglise'},
+                {data: 'libelleType', name: 'libelleType'},
                 {data: 'adresse', name: 'adresse'},
-                {data: 'email', name: 'email'},
-                {data: 'telMobile', name: 'telMobile'},
+                {data: 'nomDist', name: 'nomDist'},
                 {data: 'created_at', name: 'created_at'},
                 {data: 'updated_at', name: 'updated_at'},
                 {data: 'action', name: 'action', orderable: true, searchable: true},
@@ -231,15 +330,18 @@
         Click to Button
         --------------------------------------------
         --------------------------------------------*/
-        $('#createNewFederation').click(function () {
-            $('#saveBtn').val("create-federation");
-            $('#federation_id').val('');
-            $('#federationForm').trigger("reset");
-            $('#modelHeading').html(" Créer une nouvelle Federation");
+        $('#createNewEglise').click(function () {
+            $('#saveBtn').val("create-eglise");
+            $('#eglise_id').val('');
+            $('#egliseForm').trigger("reset");
+            $('#modelHeading').html(" Créer une nouvelle Eglise");
             $('#ajaxModel').modal('show');
         });
 
         $('#ajaxModel').on('hidden.bs.modal', function () {
+            $('.print-error-msg').hide();
+        })
+        $('#membreModel').on('hidden.bs.modal', function () {
             $('.print-error-msg').hide();
         })
         /*------------------------------------------
@@ -247,10 +349,19 @@
         Click to Edit Button
         --------------------------------------------
         --------------------------------------------*/
-        $('body').on('click', '.showFederation', function () {
-          var federation_id = $(this).data('id');
-          $.get("{{ route('federation.index') }}" +'/' + federation_id, function (data) {
-            $('.nomFed').text(data.nomFed);
+        $('body').on('click', '.showEglise', function () {
+          var eglise_id = $(this).data('id');
+          $.get("{{ route('eglise.index') }}" +'/' + eglise_id, function (data) {
+            
+            if (data.district) {
+                $('.nomDist').show();
+                  $('.district_id').text(data.district.nomDist);
+                }
+              if (data.type) {
+                $('.libelleType').show();
+                  $('.type_id').text(data.type.libelleType);
+                }
+            $('.nomEglise').text(data.nomEglise);
             $('.adresse').text(data.contact.adresse);
             $('.email').text(data.contact.email);
             $('.telMobile').text(data.contact.telMobile);
@@ -266,14 +377,14 @@
         Click to add disctrict Button
         --------------------------------------------
         --------------------------------------------*/
-        $('body').on('click', '.addDistrict', function () {
-          var federation_id = $(this).data('id');
-          $.get("{{ route('federation.index') }}" +'/' + federation_id +'/addDistrict', function (data) {
-              $('#modelHeadingDist').html(" Ajouter un district à cette Federation");
-              $('#saveBtnDist').val("add-district-federation");
-              $('#districtModel').modal('show');
-              $('#federation_id_dist').val(data.id);
-              $('#nomFedDist').val(data.nomFed);
+        $('body').on('click', '.addMembre', function () {
+          var eglise_id = $(this).data('id');
+          $.get("{{ route('eglise.index') }}" +'/' + eglise_id +'/addMembre', function (data) {
+              $('#modelHeadingDist').html(" Ajouter un membre à cette Eglise");
+              $('#saveBtnDist').val("add-membre-eglise");
+              $('#membreModel').modal('show');
+              $('#eglise_id_dist').val(data.id);
+              $('#nomEgliseDist').val(data.nomEglise);
           })
         });
         /*------------------------------------------
@@ -281,15 +392,21 @@
         Click to Edit Button
         --------------------------------------------
         --------------------------------------------*/
-        $('body').on('click', '.editFederation', function () {
-          var federation_id = $(this).data('id');
-          $.get("{{ route('federation.index') }}" +'/' + federation_id +'/edit', function (data) {
-              $('#modelHeading').html(" Modifier la Federation");
-              $('#saveBtn').val("edit-federation");
+        $('body').on('click', '.editEglise', function () {
+          var eglise_id = $(this).data('id');
+          $.get("{{ route('eglise.index') }}" +'/' + eglise_id +'/edit', function (data) {
+              $('#modelHeading').html(" Modifier la Eglise");
+              $('#saveBtn').val("edit-eglise");
               $('#ajaxModel').modal('show');
-              $('#federation_id').val(data.id);
+              $('#eglise_id').val(data.id);
+              if (data.district) {
+                  $('#district_id').val(data.district.id);
+                }
+              if (data.type) {
+                  $('#type_id').val(data.type.id);
+                }
               $('#contact_id').val(data.contact.id);
-              $('#nomFed').val(data.nomFed);
+              $('#nomEglise').val(data.nomEglise);
               $('#adresse').val(data.contact.adresse);
               $('#email').val(data.contact.email);
               $('#telMobile').val(data.contact.telMobile);
@@ -301,10 +418,10 @@
 
         /*------------------------------------------
         --------------------------------------------
-        Create federation Code
+        Create eglise Code
         --------------------------------------------
         --------------------------------------------*/
-        $('#federationForm').submit(function(e) {
+        $('#egliseForm').submit(function(e) {
             e.preventDefault();
 
             let formData = new FormData(this);
@@ -312,17 +429,17 @@
 
             $.ajax({
                     type:'POST',
-                    url: "{{ route('federation.store') }}",
+                    url: "{{ route('eglise.store') }}",
                     data: formData,
                     contentType: false,
                     processData: false,
                     success: (response) => {
                           $('#saveBtn').html('Enregistrer');
-                          $('#federationForm').trigger("reset");
+                          $('#egliseForm').trigger("reset");
                           $('#ajaxModel').modal('hide');
-                          msg = 'Federation ajoutée avec succès.';
-                          if($('#saveBtn').val() == 'edit-federation'){
-                            msg = 'Federation modifiée avec succès.';
+                          msg = 'Eglise ajoutée avec succès.';
+                          if($('#saveBtn').val() == 'edit-eglise'){
+                            msg = 'Eglise modifiée avec succès.';
                           }
                           $(".alert-success-text").text(msg);
                           $(".alert-success").show();
@@ -330,10 +447,10 @@
                     },
                     error: function(response){
                         $('#saveBtn').html('Enregistrer');
-                        $('#federationForm').find(".print-error-msg").find("ul").html('');
-                        $('#federationForm').find(".print-error-msg").css('display','block');
+                        $('#egliseForm').find(".print-error-msg").find("ul").html('');
+                        $('#egliseForm').find(".print-error-msg").css('display','block');
                         $.each( response.responseJSON.errors, function( key, value ) {
-                            $('#federationForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
+                            $('#egliseForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
                         });
                     }
                });
@@ -341,10 +458,10 @@
         });
         /*------------------------------------------
         --------------------------------------------
-        Create district - federation Code
+        Create membre - eglise Code
         --------------------------------------------
         --------------------------------------------*/
-        $('#districtFedForm').submit(function(e) {
+        $('#membreEgliseForm').submit(function(e) {
             e.preventDefault();
 
             let formData = new FormData(this);
@@ -354,25 +471,25 @@
 
             $.ajax({
                     type:'POST',
-                    url: "{{ route('federation.storeDistrict') }}",
+                    url: "{{ route('eglise.storeMembre') }}",
                     data: formData,
                     contentType: false,
                     processData: false,
                     success: (response) => {
                           $('#saveBtnDist').html('Enregistrer');
-                          $('#districtFedForm').trigger("reset");
-                          $('#districtModel').modal('hide');
-                          msg = 'District ajouté à cette federation avec succès.';
+                          $('#membreEgliseForm').trigger("reset");
+                          $('#membreModel').modal('hide');
+                          msg = 'Membre ajouté à cette eglise avec succès.';
                           $(".alert-success-text").text(msg);
                           $(".alert-success").show();
                           table.draw();
                     },
                     error: function(response){
                         $('#saveBtnDist').html('Enregistrer');
-                        $('#districtFedForm').find(".print-error-msg").find("ul").html('');
-                        $('#districtFedForm').find(".print-error-msg").css('display','block');
+                        $('#membreEgliseForm').find(".print-error-msg").find("ul").html('');
+                        $('#membreEgliseForm').find(".print-error-msg").css('display','block');
                         $.each( response.responseJSON.errors, function( key, value ) {
-                            $('#districtFedForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
+                            $('#membreEgliseForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
                         });
                     }
                });
@@ -381,24 +498,24 @@
 
         /*------------------------------------------
         --------------------------------------------
-        Delete federation Code
+        Delete eglise Code
         --------------------------------------------
         --------------------------------------------*/
-        $('body').on('click', '.deleteFederation', function () {
-            var federation_id = $(this).data("id");
-            $("#federation_id").val(federation_id);
-            $('#deleteText').text("Vous voulez vraiment supprimer cette federation?");
+        $('body').on('click', '.deleteEglise', function () {
+            var eglise_id = $(this).data("id");
+            $("#eglise_id").val(eglise_id);
+            $('#deleteText').text("Vous voulez vraiment supprimer cette eglise?");
             $('#deleteModel').modal('show');
         });
         $('body').on('click', '#deleteBtn', function () {
-            var federation_id = $("#federation_id").val();
+            var eglise_id = $("#eglise_id").val();
 
             $.ajax({
                 type: "DELETE",
-                url: "{{ route('federation.store') }}"+'/'+federation_id,
+                url: "{{ route('eglise.store') }}"+'/'+eglise_id,
                 success: function (data) {
                     $('#deleteModel').modal('hide');
-                    $(".alert-success-text").text('Federation supprimée avec succès.');
+                    $(".alert-success-text").text('Eglise supprimée avec succès.');
                     $(".alert-success").show();
                     table.draw();
                 },

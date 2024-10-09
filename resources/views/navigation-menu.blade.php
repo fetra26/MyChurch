@@ -39,6 +39,9 @@
                         <x-nav-link href="{{ route('district.index') }}" :active="request()->routeIs('district.index')">
                             {{ __('District') }}
                         </x-nav-link>
+                        <x-nav-link href="{{ route('eglise.index') }}" :active="request()->routeIs('eglise.index')">
+                            {{ __('Eglise') }}
+                        </x-nav-link>
                     @endif
                     {{-- ******************************************************** --}}
                 </div>

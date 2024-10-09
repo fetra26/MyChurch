@@ -11,7 +11,7 @@ class Type extends Model
     protected $fillable = [
         'libelleType'
     ];
-    public function eglises(): HasMany
+    public function eglises()
     {
         return $this->hasMany(Eglise::class,'id_type');
     }

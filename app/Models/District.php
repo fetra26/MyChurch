@@ -13,7 +13,7 @@ class District extends Model
         'id_fed',
         'id_miss',
     ];
-    public function eglises(): HasMany
+    public function eglises()
     {
         return $this->hasMany(Eglise::class,'id_dist');
     }
@@ -26,7 +26,7 @@ class District extends Model
         return $this->belongsTo(Federation::class,'id_fed');
     }
 
-    public function pasteurs(): BelongsToMany
+    public function pasteurs()
     {
         return $this->belongsToMany(Membre::class, 'pasteur_districts', 'id_pst', 'id_dist')
                     ->withPivot('dateDebut', 'dateFin')
