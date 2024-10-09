@@ -20,9 +20,9 @@
                         <tr>
                             <th>N°</th>
                             <th>Nom</th>
+                            <th>Type</th>
                             <th>Adresse</th>
-                            <th>E-mail</th>
-                            <th>Téléphone</th>
+                            <th>District</th>
                             <th>Date de création</th>
                             <th>Dernière modification</th>
                             <th>Actions</th>
