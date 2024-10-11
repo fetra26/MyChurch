@@ -35,8 +35,9 @@ class Membre extends Model
     }
     public function eglise()
     {
-        return $this->belongsTo(Eglise::class, 'id_stat');
+        return $this->belongsTo(Eglise::class, 'id_eglise');
     }
+
     public function districts()
     {
         return $this->belongsToMany(District::class,'pasteur_districts', 'id_pst', 'id_dist')
@@ -49,4 +50,17 @@ class Membre extends Model
                     ->withPivot('dateDebutServ', 'dateFinServ')
                     ->withTimestamps();
     }
+
+    public function hasService(string $serviceLabel): bool
+    {
+        return $this->services()->where('services.libelleServ', $serviceLabel)->exists();
+    }
+
+    public static function membersWithService(string $serviceLabel)
+{
+    return self::whereHas('services', function ($query) use ($serviceLabel) {
+        $query->where('libelleServ', $serviceLabel);
+    })->get();
+}
+
 }

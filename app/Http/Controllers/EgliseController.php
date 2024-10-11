@@ -251,7 +251,7 @@ class EgliseController extends Controller
             $status = Status::find($request->status_id);
 
             $membre->status()->associate($status);
-
+            $membre->save();
             $eglise = Eglise::find($request->eglise_id);
             
             $eglise->membres()->save($membre);
