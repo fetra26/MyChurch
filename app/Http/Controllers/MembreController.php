@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bapteme;
 use App\Models\Contact;
 use App\Models\Eglise;
 use App\Models\Membre;
@@ -222,38 +223,18 @@ class MembreController extends Controller
         
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
 
-            $contact = Contact::updateOrCreate([
-
-                'id' => $request->contact_id
-
-            ],
-
-            [
-                'adresse' => $request->adresse,
-                'email' => $request->email,
-                'telMobile' => $request->telMobile,
-                'telFixe' => $request->telFixe,
-                'BP' => $request->BP,
-                'codePost' => $request->codePost,
-
+            $dateBapt = Carbon::createFromFormat('d/m/Y', $request->dateBapt)->format('Y-m-d');
+            $membre = Membre::find($request->membre_id);
+            $bapteme = new Bapteme([
+                'messageBapt' => $request->messageBapt,
+                // 'certificat' => 'certificat_path',
+                'lieuBapt' => $request->lieuBapt,
+                'isCertDelivered' => $request->delivered,
+                'dateBapt' => $dateBapt,
+                'id_pst' => $request->id_pst
             ]);
-            $datenais = Carbon::createFromFormat('d/m/Y', $request->datenais)->format('Y-m-d');
-            $membre = new Membre([
-                'nom' => $request->nom,
-                'prenom' => $request->prenom,
-                'sexe' => $request->sexe,
-                'datenais' => $datenais,
-            ]);
-            $membre->contact()->associate($contact);
 
-            $status = Status::find($request->status_id);
-
-            $membre->status()->associate($status);
-            $membre->save();
-            $eglise = Eglise::find($request->eglise_id);
-            
-            $eglise->membres()->save($membre);
-
+            $membre->baptemes()->save($bapteme);
             return response()->json(['success'=>'Bapteme enregistré avec succès']);
         }else {
             return redirect('dashboard');
@@ -265,9 +246,24 @@ class MembreController extends Controller
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             $membre = Membre::find($request->id);
-            // $service = Service::find($request->service_id);
-            // $membre->services()->attach($service);
 
+            return response()->json($membre);
+        }else {
+            return redirect('dashboard');
+        }
+    }
+    public function storeService(Request $request){
+        $currentUser = Auth::user();
+        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        
+            $membre = Membre::find($request->membre_id);
+            $service = Service::find($request->id_serv);
+            $dateDebut = Carbon::createFromFormat('d/m/Y', $request->dateDebut)->format('Y-m-d');
+            $dateFin = Carbon::createFromFormat('d/m/Y', $request->dateFin)->format('Y-m-d');
+            $membre->services()->attach($service->id, [
+                'dateDebutServ' => $dateDebut,
+                'dateFinServ' => $dateFin
+            ]);
             return response()->json($membre);
         }else {
             return redirect('dashboard');

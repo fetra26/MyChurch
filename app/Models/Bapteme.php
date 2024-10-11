@@ -20,11 +20,11 @@ class Bapteme extends Model
 
     public function membre()
     {
-        return $this->belongsTo(Bapteme::class);
+        return $this->belongsTo(Membre::class, 'id_membre');
     }
     public function pasteur()
     {
-        return $this->belongsTo(Bapteme::class);
+        return $this->belongsTo(Membre::class, 'id_pst');
     }
 
     // public static function rules()

@@ -34,10 +34,15 @@ Route::resource('federation', FederationController::class);
 Route::get('federation/{id}/addDistrict', [FederationController::class, 'addDistrict']);
 Route::post('federation/storeDistrict', [FederationController::class, 'storeDistrict'])->name('federation.storeDistrict');
 Route::resource('district', DistrictController::class);
+Route::get('district/{id}/asignPasteur', [DistrictController::class, 'asignPasteur']);
+Route::post('district/storePasteur', [DistrictController::class, 'storePasteur'])->name('district.storePasteur');
+
 Route::resource('eglise', EgliseController::class);
 Route::get('eglise/{id}/addMembre', [EgliseController::class, 'addMembre']);
 Route::post('eglise/storeMembre', [EgliseController::class, 'storeMembre'])->name('eglise.storeMembre');
+
 Route::resource('membre', MembreController::class);
 Route::get('membre/{id}/addBaptism', [MembreController::class, 'addBaptism']);
 Route::post('membre/storeBaptism', [MembreController::class, 'storeBaptism'])->name('membre.storeBaptism');
 Route::get('membre/{id}/asignService', [MembreController::class, 'asignService']);
+Route::post('membre/storeService', [MembreController::class, 'storeService'])->name('membre.storeService');

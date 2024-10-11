@@ -134,8 +134,68 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="pasteurModel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modelHeadingPst"></h4>
+                </div>
+                <div class="modal-body">
+                    <form id="districtPstForm" name="districtPstForm" class="form-horizontal">
+                       <input type="hidden" name="district_id" id="district_id_pst">
+                       @csrf
+
+                        <div class="alert alert-danger print-error-msg" style="display:none">
+                            <ul></ul>
+                        </div>
+                        <div class="form-group">
+                            <label for="nomDistPst" class="col-sm control-label">Nom du district:</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="nomDistPst" name="nomDistPst" maxlength="50" disabled>
+                            </div>
+                        </div>
+                       
+                        <label for="">Date de début</label>
+                        <input id="datepickerDebut" name="dateDebut"/>
+                        <label for="">Date de fin</label>
+                        <input id="datepickerFin" name="dateFin"/>
+                        <div class="form-group mt-1" id="pstSelect">
+                            
+                            <select class="form-select mt-2 mb-2" aria-label="Default select example" id="pasteur_id" name="pasteur_id">
+                                <option selected value="">Choisir le pasteur</option>
+                                @forelse ($pasteurs as $pasteur)
+                                <option value="{{$pasteur->id}}">{{$pasteur->nom}} {{$pasteur->prenom}}</option>
+                                @empty
+                                
+                                @endforelse
+                            </select>
+                        </div>
+                  
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success mt-2" id="saveBtnServ" value="create"> Enregistrer
+                        </button>
+                        <button type="button" class="btn btn-danger mt-2 close" data-bs-dismiss="modal"> Annuler
+                        </button>
+                    </div>
+                    </form>
+            </div>
+        </div>
+    </div>
     <script>
         $(document).ready(function() {
+            
+            $('#datepickerDebut').datepicker({
+                uiLibrary: 'bootstrap5',
+                locale: 'fr-fr',
+                format: 'dd/mm/yyyy'
+            });
+            $('#datepickerFin').datepicker({
+                uiLibrary: 'bootstrap5',
+                locale: 'fr-fr',
+                format: 'dd/mm/yyyy'
+            });
             $('#toggleFed').click(function () {
                 // Hide missSelect if it is open
                 if ($('#missSelect').is(':visible')) {
@@ -360,6 +420,61 @@
                     console.log('Error:', data);
                 }
             });
+
+        });
+
+            /*------------------------------------------
+        --------------------------------------------
+        Click to add pasteur Button
+        --------------------------------------------
+        --------------------------------------------*/
+        $('body').on('click', '.asignPasteur', function () {
+          var membre_id = $(this).data('id');
+          $.get("{{ route('district.index') }}" +'/' + membre_id +'/asignPasteur', function (data) {
+              $('#modelHeadingPst').html(" Assigner un pasteur à ce district");
+              $('#saveBtnPst').val("add-district-pst");
+              $('#pasteurModel').modal('show');
+              $('#district_id_pst').val(data.id);
+              $('#nomDistPst').val(data.nomDist);
+            })
+        });
+        /*------------------------------------------
+        --------------------------------------------
+        Create membre - service Code
+        --------------------------------------------
+        --------------------------------------------*/
+        $('#districtPstForm').submit(function(e) {
+            e.preventDefault();
+
+            let formData = new FormData(this);
+            console.log(formData);
+            
+            $('#saveBtnPst').html('En cours...');
+
+            $.ajax({
+                    type:'POST',
+                    url: "{{ route('district.storePasteur') }}",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: (response) => {
+                          $('#saveBtnPst').html('Enregistrer');
+                          $('#districtPstForm').trigger("reset");
+                          $('#pasteurModel').modal('hide');
+                          msg = 'Pasteur assigné à ce district avec succès.';
+                          $(".alert-success-text").text(msg);
+                          $(".alert-success").show();
+                          table.draw();
+                    },
+                    error: function(response){
+                        $('#saveBtnPst').html('Enregistrer');
+                        $('#districtPstForm').find(".print-error-msg").find("ul").html('');
+                        $('#districtPstForm').find(".print-error-msg").css('display','block');
+                        $.each( response.responseJSON.errors, function( key, value ) {
+                            $('#districtPstForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
+                        });
+                    }
+               });
 
         });
         });

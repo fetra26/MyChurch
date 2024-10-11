@@ -11,7 +11,7 @@ class Service extends Model
     protected $fillable = [
         'libelleServ'
     ];
-    public function membres(): BelongsToMany
+    public function membres()
     {
         return $this->belongsToMany(Membre::class, 'service_membres', 'id_membre', 'id_serv')
                     ->withPivot('dateDebutServ', 'dateFinServ')

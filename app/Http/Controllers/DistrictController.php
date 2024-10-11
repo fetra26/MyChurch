@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\District;
 use App\Models\Federation;
+use App\Models\Membre;
 use App\Models\Mission;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -22,6 +24,7 @@ class DistrictController extends Controller
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             $federations = Federation::with('contact')->latest()->get();
             $missions = Mission::with('contact')->latest()->get();
+                        $pasteurs = Membre::membersWithService('Pasteur');
             if ($request->ajax()) {
 
                 $data = District::with('mission')->with('federation')->latest()->get();
@@ -31,10 +34,10 @@ class DistrictController extends Controller
 
                             $btn = '<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Details" class="details btn btn-info btn-sm showDistrict"><i class="fa fa-eye text-white"></i></a>';
                             $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Modifier" class="edit btn btn-warning btn-sm editDistrict"><i class="fa fa-pencil text-white"></i></a>';
-
                             $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Supprimer" class="btn btn-danger btn-sm deleteDistrict"><i class="fa fa-trash"></i></a>';
+                            $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Assigner un pasteur" class="btn btn-success btn-sm asignPasteur"><i class="fa fa-tasks text-white"></i></a>';
 
-                                return $btn;
+                            return $btn;
                         })
                         ->editColumn('nomDist', function($row) {
                             return ucfirst($row->nomDist);
@@ -55,7 +58,7 @@ class DistrictController extends Controller
                         ->make(true);
             }
 
-            return view('districts.show',compact('federations', 'missions'));
+            return view('districts.show',compact('federations', 'missions', 'pasteurs'));
 
         }else {
             return redirect('dashboard');
@@ -178,6 +181,37 @@ class DistrictController extends Controller
 
             District::find($id)->delete();
             return response()->json(['success'=>'District supprimé avec succès.']);
+        }else {
+            return redirect('dashboard');
+        }
+    }
+
+    
+    public function asignPasteur(Request $request){
+        $currentUser = Auth::user();
+        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        
+            $district = District::find($request->id);
+
+            return response()->json($district);
+        }else {
+            return redirect('dashboard');
+        }
+    }
+    public function storePasteur(Request $request){
+        $currentUser = Auth::user();
+        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        
+            $district = District::find($request->district_id);
+            $pasteur = Membre::find($request->pasteur_id);
+            $dateDebut = Carbon::createFromFormat('d/m/Y', $request->dateDebut)->format('Y-m-d');
+            $dateFin = Carbon::createFromFormat('d/m/Y', $request->dateFin)->format('Y-m-d');
+            
+            $pasteur->districts()->attach($district->id, [
+                'dateDebut' => $dateDebut,
+                'dateFin' => $dateFin 
+            ]);
+            return response()->json($district);
         }else {
             return redirect('dashboard');
         }

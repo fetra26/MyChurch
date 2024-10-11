@@ -157,11 +157,11 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="modelHeadingDist"></h4>
+                    <h4 class="modal-title" id="modelHeadingBapt"></h4>
                 </div>
                 <div class="modal-body">
                     <form id="membreBaptismForm" name="membreBaptismForm" class="form-horizontal">
-                       <input type="hidden" name="membre_id" id="membre_id">
+                       <input type="hidden" name="membre_id" id="membre_id_bapt">
                        @csrf
 
                         <div class="alert alert-danger print-error-msg" style="display:none">
@@ -196,7 +196,7 @@
                   
                         <div class="form-group mb-3">
                             <label for="messageBapt" class="form-label">Message du bapteme</label>
-                            <textarea class="form-control" id="messageBapt" rows="3"></textarea>
+                            <textarea class="form-control" id="messageBapt" name="messageBapt" rows="3"></textarea>
                           </div>
                         <label for="">Certificat</label>
                         <div class="form-check">
@@ -229,11 +229,11 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="modelHeadingDist"></h4>
+                    <h4 class="modal-title" id="modelHeadingServ"></h4>
                 </div>
                 <div class="modal-body">
                     <form id="membreServiceForm" name="membreServiceForm" class="form-horizontal">
-                       <input type="hidden" name="membre_id" id="membre_id">
+                       <input type="hidden" name="membre_id" id="membre_id_serv">
                        @csrf
 
                         <div class="alert alert-danger print-error-msg" style="display:none">
@@ -445,10 +445,10 @@
           $.get("{{ route('membre.index') }}" +'/' + membre_id +'/addBaptism', function (data) {
             console.log(data.nom +' '+ data.prenom);
             
-              $('#modelHeadingDist').html(" Ajouter un bapteme à cette Membre");
+              $('#modelHeadingBapt').html(" Ajouter un bapteme à ce Membre");
               $('#saveBtnBapt').val("add-membre-baptism");
               $('#baptismModel').modal('show');
-              $('#membre_id').val(data.id);
+              $('#membre_id_bapt').val(data.id);
               $('#nomMembre').val(data.nom +' '+ data.prenom);
           })
         });
@@ -462,10 +462,10 @@
           $.get("{{ route('membre.index') }}" +'/' + membre_id +'/asignService', function (data) {
             console.log(data.nom +' '+ data.prenom);
             
-              $('#modelHeadingDist').html(" Ajouter un bapteme à cette Membre");
-              $('#saveBtnBapt').val("add-membre-baptism");
+              $('#modelHeadingServ').html(" Assigner un service à ce Membre");
+              $('#saveBtnServ').val("add-membre-service");
               $('#serviceModel').modal('show');
-              $('#membre_id').val(data.id);
+              $('#membre_id_serv').val(data.id);
               $('#nomMembreServ').val(data.nom + (data.prenom ? ' ' + data.prenom : ''));
             })
         });
@@ -538,7 +538,7 @@
                           $('#saveBtn').html('Enregistrer');
                           $('#membreForm').trigger("reset");
                           $('#ajaxModel').modal('hide');
-                          msg = 'Membre ajoutée avec succès.';
+                          msg = 'Membre ajouté avec succès.';
                           if($('#saveBtn').val() == 'edit-membre'){
                             msg = 'Membre modifié avec succès.';
                           }
@@ -559,7 +559,7 @@
         });
         /*------------------------------------------
         --------------------------------------------
-        Create membre - membre Code
+        Create membre - baptism Code
         --------------------------------------------
         --------------------------------------------*/
         $('#membreBaptismForm').submit(function(e) {
@@ -580,7 +580,7 @@
                           $('#saveBtnBapt').html('Enregistrer');
                           $('#membreBaptismForm').trigger("reset");
                           $('#baptismModel').modal('hide');
-                          msg = 'Bapteme ajouté à cette membre avec succès.';
+                          msg = 'Bapteme ajouté à ce membre avec succès.';
                           $(".alert-success-text").text(msg);
                           $(".alert-success").show();
                           table.draw();
@@ -591,6 +591,45 @@
                         $('#membreBaptismForm').find(".print-error-msg").css('display','block');
                         $.each( response.responseJSON.errors, function( key, value ) {
                             $('#membreBaptismForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
+                        });
+                    }
+               });
+
+        });
+        /*------------------------------------------
+        --------------------------------------------
+        Create membre - service Code
+        --------------------------------------------
+        --------------------------------------------*/
+        $('#membreServiceForm').submit(function(e) {
+            e.preventDefault();
+
+            let formData = new FormData(this);
+            console.log(formData);
+            
+            $('#saveBtnServ').html('En cours...');
+
+            $.ajax({
+                    type:'POST',
+                    url: "{{ route('membre.storeService') }}",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: (response) => {
+                          $('#saveBtnServ').html('Enregistrer');
+                          $('#membreServiceForm').trigger("reset");
+                          $('#serviceModel').modal('hide');
+                          msg = 'Service assigné à ce membre avec succès.';
+                          $(".alert-success-text").text(msg);
+                          $(".alert-success").show();
+                          table.draw();
+                    },
+                    error: function(response){
+                        $('#saveBtnServ').html('Enregistrer');
+                        $('#membreServiceForm').find(".print-error-msg").find("ul").html('');
+                        $('#membreServiceForm').find(".print-error-msg").css('display','block');
+                        $.each( response.responseJSON.errors, function( key, value ) {
+                            $('#membreServiceForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
                         });
                     }
                });
@@ -616,7 +655,7 @@
                 url: "{{ route('membre.store') }}"+'/'+membre_id,
                 success: function (data) {
                     $('#deleteModel').modal('hide');
-                    $(".alert-success-text").text('Membre supprimée avec succès.');
+                    $(".alert-success-text").text('Membre supprimé avec succès.');
                     $(".alert-success").show();
                     table.draw();
                 },
