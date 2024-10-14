@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Services') }}
+            {{ __('Services ou Departements') }}
         </h2>
     </x-slot>
 
     <div>
-        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+        <div class="max-w-screen-2xl mx-auto py-10 sm:px-6 lg:px-8">
 
             <x-section-border />
             <div class="alert alert-success alert-dismissible fade show" style="display: none">

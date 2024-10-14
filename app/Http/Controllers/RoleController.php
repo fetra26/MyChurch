@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Status;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
-
-class StatusController extends Controller
+class RoleController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,20 +19,20 @@ class StatusController extends Controller
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             if ($request->ajax()) {
     
-                $data = Status::latest()->get();
+                $data = Role::latest()->get();
     
                 return DataTables::of($data)
                         ->addIndexColumn()
                         ->addColumn('action', function($row){
     
-                               $btn = '<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Modifier" class="edit btn btn-warning btn-sm editStatus"><i class="fa fa-pencil text-white"></i></a>';
+                               $btn = '<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Modifier" class="edit btn btn-warning btn-sm editRole"><i class="fa fa-pencil text-white"></i></a>';
     
-                               $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Supprimer" class="btn btn-danger btn-sm deleteStatus"><i class="fa fa-trash"></i></a>';
+                               $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Supprimer" class="btn btn-danger btn-sm deleteRole"><i class="fa fa-trash"></i></a>';
     
                                 return $btn;
                         })
-                        ->editColumn('libelleStat', function($row) {
-                            return ucfirst($row->libelleStat);
+                        ->editColumn('libelleRole', function($row) {
+                            return ucfirst($row->libelleRole);
                         }) ->editColumn('created_at', function($row) {
                             return date('d/m/Y H:i', strtotime($row->created_at));
                         })
@@ -43,11 +42,10 @@ class StatusController extends Controller
                         ->rawColumns(['action'])
                         ->make(true);
             }
-            return view('status.show');
+            return view('roles.show');
         }else {
             return redirect('dashboard');
         }
-
     }
 
     /**
@@ -66,21 +64,21 @@ class StatusController extends Controller
         $currentUser = Auth::user();
         
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
-            Status::updateOrCreate([
+            Role::updateOrCreate([
 
-                        'id' => $request->status_id
+                        'id' => $request->role_id
 
                     ],
 
                     [
 
-                        'libelleStat' => $request->libelleStat
+                        'libelleRole' => $request->libelleRole
 
                     ]);
 
 
 
-            return response()->json(['success'=>'Statut enregistré avec succès']);
+            return response()->json(['success'=>'Role enregistré avec succès']);
             
         }else {
             return redirect('dashboard');
@@ -109,9 +107,9 @@ class StatusController extends Controller
         $currentUser = Auth::user();
         
             if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
-            $status = Status::find($id);
+            $role = Role::find($id);
 
-            return response()->json($status);
+            return response()->json($role);
         
         }else {
             return redirect('dashboard');
@@ -121,7 +119,7 @@ class StatusController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Status $status)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -133,12 +131,12 @@ class StatusController extends Controller
     {
         $currentUser = Auth::user();
             
-            if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
-            Status::find($id)->delete();
-            return response()->json(['success'=>'Statut supprimé avec succès.']);
-            
-        }else {
-            return redirect('dashboard');
-        }
+        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        Role::find($id)->delete();
+        return response()->json(['success'=>'Role supprimé avec succès.']);
+        
+    }else {
+        return redirect('dashboard');
+    }
     }
 }

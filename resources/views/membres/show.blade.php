@@ -6,7 +6,7 @@
     </x-slot>
 
     <div>
-        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+        <div class="max-w-screen-2xl mx-auto py-10 sm:px-6 lg:px-8">
 
             <x-section-border />
             <div class="alert alert-success alert-dismissible fade show" style="display: none">
@@ -22,7 +22,6 @@
                             <th>Nom</th>
                             <th>Prénom(s)</th>
                             <th>Sexe</th>
-                            <th>Né(e) le</th>
                             <th>Eglise</th>
                             <th>Statut</th>
                             <th>Adresse</th>
@@ -247,15 +246,26 @@
                         </div>
                        
                         <label for="">Date de début</label>
-                        <input id="datepickerDebut" name="dateDebut"/>
+                        <input id="datepickerDebut" name="dateDebut" required/>
                         <label for="">Date de fin</label>
-                        <input id="datepickerFin" name="dateFin"/>
-                        <div class="form-group mt-1" id="pstSelect">
+                        <input id="datepickerFin" name="dateFin" required/>
+                        <div class="form-group mt-1" id="servSelect">
                             
                             <select class="form-select mt-2 mb-2" aria-label="Default select example" id="id_serv" name="id_serv">
                                 <option selected value="">Choisir le service</option>
                                 @forelse ($services as $service)
-                                <option value="{{$service->id}}">{{$service->nom}} {{$service->libelleServ}}</option>
+                                <option value="{{$service->id}}">{{$service->libelleServ}}</option>
+                                @empty
+                                
+                                @endforelse
+                            </select>
+                        </div>
+                        <div class="form-group mt-1" id="roleSelect">
+                            
+                            <select class="form-select mt-2 mb-2" aria-label="Default select example" id="role_id" name="role_id">
+                                <option selected value="">Choisir le rôle</option>
+                                @forelse ($roles as $role)
+                                <option value="{{$role->id}}">{{$role->libelleRole}}</option>
                                 @empty
                                 
                                 @endforelse
@@ -371,7 +381,6 @@
                 {data: 'nom', name: 'nom'},
                 {data: 'prenom', name: 'prenom'},
                 {data: 'sexe', name: 'sexe'},
-                {data: 'datenais', name: 'datenais'},
                 {data: 'nomEglise', name: 'nomEglise'},
                 {data: 'libelleStat', name: 'libelleStat'},
                 {data: 'adresse', name: 'adresse'},
@@ -424,7 +433,12 @@
             $('.nom').text(data.nom);
             $('.prenom').text(data.prenom);
             $('.sexe').text((data.sexe == 0) ? 'Femme' : 'Homme');
-            $('.datenais').text(data.datenais);
+
+            let dateStr = data.datenais; 
+            let dateParts = dateStr.split('-');
+            let formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+            $('.datenais').text(formattedDate);
+
             $('.adresse').text(data.contact.adresse);
             $('.email').text(data.contact.email);
             $('.telMobile').text(data.contact.telMobile);

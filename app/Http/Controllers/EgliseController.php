@@ -239,7 +239,7 @@ class EgliseController extends Controller
                 'codePost' => $request->codePost,
 
             ]);
-            $datenais = Carbon::createFromFormat('d/m/Y', $request->datenais)->format('Y-m-d');
+            $datenais = ($request->datenais) ? Carbon::createFromFormat('d/m/Y', $request->datenais)->format('Y-m-d') : NULL;
             $membre = new Membre([
                 'nom' => $request->nom,
                 'prenom' => $request->prenom,

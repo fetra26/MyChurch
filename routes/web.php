@@ -9,6 +9,7 @@ use App\Http\Controllers\TypeController;
 use App\Http\Controllers\MissionController;
 use App\Http\Controllers\FederationController;
 use App\Http\Controllers\MembreController;
+use App\Http\Controllers\RoleController;
 use App\Models\District;
 use Illuminate\Support\Facades\Route;
 
@@ -46,3 +47,5 @@ Route::get('membre/{id}/addBaptism', [MembreController::class, 'addBaptism']);
 Route::post('membre/storeBaptism', [MembreController::class, 'storeBaptism'])->name('membre.storeBaptism');
 Route::get('membre/{id}/asignService', [MembreController::class, 'asignService']);
 Route::post('membre/storeService', [MembreController::class, 'storeService'])->name('membre.storeService');
+
+Route::resource('role', RoleController::class);

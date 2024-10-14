@@ -47,7 +47,7 @@ class Membre extends Model
     public function services()
     {
         return $this->belongsToMany(Service::class, 'service_membres', 'id_membre', 'id_serv')
-                    ->withPivot('dateDebutServ', 'dateFinServ')
+                    ->withPivot('dateDebutServ', 'dateFinServ','id_role')
                     ->withTimestamps();
     }
 

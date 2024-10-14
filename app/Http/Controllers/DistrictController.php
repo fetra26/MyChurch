@@ -204,8 +204,8 @@ class DistrictController extends Controller
         
             $district = District::find($request->district_id);
             $pasteur = Membre::find($request->pasteur_id);
-            $dateDebut = Carbon::createFromFormat('d/m/Y', $request->dateDebut)->format('Y-m-d');
-            $dateFin = Carbon::createFromFormat('d/m/Y', $request->dateFin)->format('Y-m-d');
+            $dateDebut = ($request->dateDebut) ? Carbon::createFromFormat('d/m/Y', $request->dateDebut)->format('Y-m-d') : NULL;
+            $dateFin = ($request->dateFin) ? Carbon::createFromFormat('d/m/Y', $request->dateFin)->format('Y-m-d') : NULL;
             
             $pasteur->districts()->attach($district->id, [
                 'dateDebut' => $dateDebut,

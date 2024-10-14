@@ -6,6 +6,7 @@ use App\Models\Bapteme;
 use App\Models\Contact;
 use App\Models\Eglise;
 use App\Models\Membre;
+use App\Models\Role;
 use App\Models\Service;
 use App\Models\Status;
 use App\Models\User;
@@ -28,6 +29,7 @@ class MembreController extends Controller
             $pasteurs = Membre::membersWithService('Pasteur');
             $status = Status::latest()->get();
             $services = Service::latest()->get();
+            $roles = Role::latest()->get();
             
             if ($request->ajax()) {
                 $data = Membre::with('contact')->with('status')->with('eglise')->latest()->get();
@@ -36,12 +38,12 @@ class MembreController extends Controller
                         ->addIndexColumn()
                         ->addColumn('action', function($row){
 
-                            $btn = '<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Details" class="details btn btn-info btn-sm showMembre"><i class="fa fa-eye text-white"></i></a>';
-                            $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Modifier" class="edit btn btn-warning btn-sm editMembre"><i class="fa fa-pencil text-white"></i></a>';
+                            $btn = '<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Details" class="details btn showMembre"><i class="fa fa-eye text-info"></i></a>';
+                            $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Modifier" class="edit btn  editMembre"><i class="fa fa-pencil text-warning"></i></a>';
 
-                            $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Supprimer" class="btn btn-danger btn-sm deleteMembre"><i class="fa fa-trash"></i></a>';
-                            $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Ajouter une date de baptême" class="btn btn-dark btn-sm addBaptism"><i class="fa fa-plus text-white"></i></a>';
-                            $btn = $btn.' <a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Assigner un service" class="btn btn-success btn-sm asignService"><i class="fa fa-tasks text-white"></i></a>';
+                            $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Supprimer" class="btn deleteMembre"><i class="fa fa-trash text-danger"></i></a>';
+                            $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Ajouter une date de baptême" class="btn addBaptism"><i class="fa fa-plus text-dark"></i></a>';
+                            $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Assigner un service" class="btn btn-sm asignService"><i class="fa fa-tasks text-success"></i></a>';
 
                             return $btn;
                         })
@@ -52,11 +54,7 @@ class MembreController extends Controller
                             return ucfirst($row->prenom);
                         })
                         ->editColumn('sexe', function($row) {
-                            return ($row->sexe == 0)? 'Femme' : 'Homme';
-                        })
-                        ->editColumn('datenais', function($row) {
-                            return ($row->datenais) ? date('d/m/Y', strtotime($row->datenais)) : '';
-
+                            return ($row->sexe == 0)? 'F' : 'H';
                         })
                         ->editColumn('nomEglise', function($row) {
                             return ($row->eglise) ? ucfirst($row->eglise->nomEglise) : '';
@@ -77,7 +75,7 @@ class MembreController extends Controller
                         ->make(true);
             }
 
-            return view('membres.show',compact('eglises', 'pasteurs','status', 'services'));
+            return view('membres.show',compact('eglises', 'pasteurs','status', 'services','roles'));
             
         }else {
             return redirect('dashboard');
@@ -223,7 +221,7 @@ class MembreController extends Controller
         
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
 
-            $dateBapt = Carbon::createFromFormat('d/m/Y', $request->dateBapt)->format('Y-m-d');
+            $dateBapt = ($request->dateBapt) ? Carbon::createFromFormat('d/m/Y', $request->dateBapt)->format('Y-m-d') : NULL;
             $membre = Membre::find($request->membre_id);
             $bapteme = new Bapteme([
                 'messageBapt' => $request->messageBapt,
@@ -258,11 +256,16 @@ class MembreController extends Controller
         
             $membre = Membre::find($request->membre_id);
             $service = Service::find($request->id_serv);
-            $dateDebut = Carbon::createFromFormat('d/m/Y', $request->dateDebut)->format('Y-m-d');
-            $dateFin = Carbon::createFromFormat('d/m/Y', $request->dateFin)->format('Y-m-d');
+            $role = NULL;
+            if ($request->role_id) {
+                $role = Role::find($request->role_id);
+            }
+            $dateDebut = ($request->dateDebut) ? Carbon::createFromFormat('d/m/Y', $request->dateDebut)->format('Y-m-d') : NULL;
+            $dateFin = ($request->dateFin) ? Carbon::createFromFormat('d/m/Y', $request->dateFin)->format('Y-m-d') : NULL;
             $membre->services()->attach($service->id, [
                 'dateDebutServ' => $dateDebut,
-                'dateFinServ' => $dateFin
+                'dateFinServ' => $dateFin,
+                'id_role' => $role? $role->id : NULL
             ]);
             return response()->json($membre);
         }else {

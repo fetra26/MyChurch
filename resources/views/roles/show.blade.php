@@ -3,7 +3,7 @@
     </style>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Statuts') }}
+            {{ __('Rôles') }}
         </h2>
     </x-slot>
 
@@ -16,7 +16,7 @@
                 <strong class="alert-success-text"></strong>
             </div>
             <div class="mt-10 sm:mt-0 cd__main">
-                <a class="btn btn-primary mb-1" href="javascript:void(0)" id="createNewStatus" data-bs-toggle="tooltip" title="Nouveau statut"> <i class="fa fa-plus"></i> </a>
+                <a class="btn btn-primary mb-1" href="javascript:void(0)" id="createNewRole" data-bs-toggle="tooltip" title="Nouveau rôle"> <i class="fa fa-plus"></i> </a>
                 <table class="table table-stripped data-table" style="width:100%">
                     <thead>
                         <tr>
@@ -41,8 +41,8 @@
                     <h4 class="modal-title" id="modelHeading"></h4>
                 </div>
                 <div class="modal-body">
-                    <form id="statusForm" name="statusForm" class="form-horizontal">
-                       <input type="hidden" name="status_id" id="status_id">
+                    <form id="roleForm" name="roleForm" class="form-horizontal">
+                       <input type="hidden" name="role_id" id="role_id">
                        @csrf
 
                         <div class="alert alert-danger print-error-msg" style="display:none">
@@ -50,9 +50,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="libelleStat" class="col-sm control-label">Libellé du statut:</label>
+                            <label for="libelleRole" class="col-sm control-label">Libellé du rôle:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="libelleStat" name="libelleStat" value="" maxlength="50" required>
+                                <input type="text" class="form-control" id="libelleRole" name="libelleRole" value="" maxlength="50" required>
                             </div>
                         </div>
 
@@ -75,7 +75,7 @@
                     <h4 class="modal-title" id="modelHeading"><i class="fa-regular fa-eye"></i> Show Product</h4>
                 </div>
                 <div class="modal-body">
-                    <p><strong>Name:</strong> <span class="show-libelleStat"></span></p>
+                    <p><strong>Name:</strong> <span class="show-libelleRole"></span></p>
                     <p><strong>Detail:</strong> <span class="show-detail"></span></p>
                 </div>
             </div>
@@ -91,7 +91,7 @@
                     <p><strong id="deleteText"></strong></p>
                 </div>
                 <div class="modal-footer">
-                    <input type="hidden" name="status_id" id="status_id">
+                    <input type="hidden" name="role_id" id="role_id">
                     <button type="submit" class="btn btn-danger mt-2" id="deleteBtn" value="delete"> Oui
                     </button>
                     <button type="button" class="btn btn-info mt-2 close" data-bs-dismiss="modal"> Non
@@ -120,28 +120,14 @@
         --------------------------------------------*/
         var table = $('.data-table').DataTable({
             language: {
-                url: "{{ asset('assets/datatables/fr-FR.json') }}",
-                //customize pagination prev and next buttons: use arrows instead of words
-                // 'paginate': {
-                // 'previous': '<span class="fa fa-chevron-left"></span>',
-                // 'next': '<span class="fa fa-chevron-right"></span>'
-                // },
-                // //customize number of elements to be displayed
-                // "lengthMenu": 'Display <select class="form-control input-sm">'+
-                // '<option value="10">10</option>'+
-                // '<option value="20">20</option>'+
-                // '<option value="30">30</option>'+
-                // '<option value="40">40</option>'+
-                // '<option value="50">50</option>'+
-                // '<option value="-1">All</option>'+
-                // '</select> results'
+                url: "{{ asset('assets/datatables/fr-FR.json') }}"
             },
             processing: true,
             serverSide: true,
-            ajax: "{{ route('status.index') }}",
+            ajax: "{{ route('role.index') }}",
             columns: [
                 {data: 'id', name: 'id'},
-                {data: 'libelleStat', name: 'libelleStat'},
+                {data: 'libelleRole', name: 'libelleRole'},
                 {data: 'created_at', name: 'created_at'},
                 {data: 'updated_at', name: 'updated_at'},
                 {data: 'action', name: 'action', orderable: true, searchable: true},
@@ -154,11 +140,11 @@
         Click to Button
         --------------------------------------------
         --------------------------------------------*/
-        $('#createNewStatus').click(function () {
-            $('#saveBtn').val("create-status");
-            $('#status_id').val('');
-            $('#statusForm').trigger("reset");
-            $('#modelHeading').html(" Créer un nouveau Statut");
+        $('#createNewRole').click(function () {
+            $('#saveBtn').val("create-role");
+            $('#role_id').val('');
+            $('#roleForm').trigger("reset");
+            $('#modelHeading').html(" Créer un nouveau Rôle");
             $('#ajaxModel').modal('show');
         });
 
@@ -167,11 +153,11 @@
         Click to Edit Button
         --------------------------------------------
         --------------------------------------------*/
-        $('body').on('click', '.showStatus', function () {
-          var status_id = $(this).data('id');
-          $.get("{{ route('status.index') }}" +'/' + status_id, function (data) {
+        $('body').on('click', '.showRole', function () {
+          var role_id = $(this).data('id');
+          $.get("{{ route('role.index') }}" +'/' + role_id, function (data) {
               $('#showModel').modal('show');
-              $('.show-libelleStat').text(data.libelleStat);
+              $('.show-libelleRole').text(data.libelleRole);
           })
         });
 
@@ -180,23 +166,23 @@
         Click to Edit Button
         --------------------------------------------
         --------------------------------------------*/
-        $('body').on('click', '.editStatus', function () {
-          var status_id = $(this).data('id');
-          $.get("{{ route('status.index') }}" +'/' + status_id +'/edit', function (data) {
-              $('#modelHeading').html(" Modifier le Statut");
-              $('#saveBtn').val("edit-status");
+        $('body').on('click', '.editRole', function () {
+          var role_id = $(this).data('id');
+          $.get("{{ route('role.index') }}" +'/' + role_id +'/edit', function (data) {
+              $('#modelHeading').html(" Modifier le Rôle");
+              $('#saveBtn').val("edit-role");
               $('#ajaxModel').modal('show');
-              $('#status_id').val(data.id);
-              $('#libelleStat').val(data.libelleStat);
+              $('#role_id').val(data.id);
+              $('#libelleRole').val(data.libelleRole);
           })
         });
 
         /*------------------------------------------
         --------------------------------------------
-        Create Status Code
+        Create Role Code
         --------------------------------------------
         --------------------------------------------*/
-        $('#statusForm').submit(function(e) {
+        $('#roleForm').submit(function(e) {
             e.preventDefault();
 
             let formData = new FormData(this);
@@ -204,17 +190,17 @@
 
             $.ajax({
                     type:'POST',
-                    url: "{{ route('status.store') }}",
+                    url: "{{ route('role.store') }}",
                     data: formData,
                     contentType: false,
                     processData: false,
                     success: (response) => {
                           $('#saveBtn').html('Enregistrer');
-                          $('#statusForm').trigger("reset");
+                          $('#roleForm').trigger("reset");
                           $('#ajaxModel').modal('hide');
-                          msg = 'Statut ajouté avec succès.';
-                          if($('#saveBtn').val() == 'edit-status'){
-                            msg = 'Statut modifié avec succès.';
+                          msg = 'Rôle ajouté avec succès.';
+                          if($('#saveBtn').val() == 'edit-role'){
+                            msg = 'Rôle modifié avec succès.';
                           }
                           $(".alert-success-text").text(msg);
                           $(".alert-success").show();
@@ -222,10 +208,10 @@
                     },
                     error: function(response){
                         $('#saveBtn').html('Enregistrer');
-                        $('#statusForm').find(".print-error-msg").find("ul").html('');
-                        $('#statusForm').find(".print-error-msg").css('display','block');
+                        $('#roleForm').find(".print-error-msg").find("ul").html('');
+                        $('#roleForm').find(".print-error-msg").css('display','block');
                         $.each( response.responseJSON.errors, function( key, value ) {
-                            $('#statusForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
+                            $('#roleForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
                         });
                     }
                });
@@ -234,23 +220,23 @@
 
         /*------------------------------------------
         --------------------------------------------
-        Delete Status Code
+        Delete Role Code
         --------------------------------------------
         --------------------------------------------*/
-        $('body').on('click', '.deleteStatus', function () {
-            var status_id = $(this).data("id");
-            $("#status_id").val(status_id);
-            $('#deleteText').text("Vous voulez vraiment supprimer ce statut?");
+        $('body').on('click', '.deleteRole', function () {
+            var role_id = $(this).data("id");
+            $("#role_id").val(role_id);
+            $('#deleteText').text("Vous voulez vraiment supprimer ce rôle?");
             $('#deleteModel').modal('show');
         });
         $('body').on('click', '#deleteBtn', function () {
-            var status_id = $("#status_id").val();
+            var role_id = $("#role_id").val();
             $.ajax({
                 type: "DELETE",
-                url: "{{ route('status.store') }}"+'/'+status_id,
+                url: "{{ route('role.store') }}"+'/'+role_id,
                 success: function (data) {
                     $('#deleteModel').modal('hide');
-                    $(".alert-success-text").text('Statut supprimé avec succès.');
+                    $(".alert-success-text").text('Rôle supprimé avec succès.');
                     $(".alert-success").show();
                     table.draw();
                 },
