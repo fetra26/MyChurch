@@ -81,4 +81,14 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Eglise::class, 'id_eglise');
     }
+    // Relationship for transfers initiated by the user
+    public function sourceTransferts()
+    {
+        return $this->hasMany(Transfert::class, 'source_responsable_id');
+    }
+ // Relationship for transfers validated by the user
+    public function destinationTransferts()
+    {
+        return $this->hasMany(Transfert::class, 'destination_responsable_id');
+    }
 }

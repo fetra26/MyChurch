@@ -47,11 +47,13 @@
                         </x-nav-link>
                         @endif
                     @if($currentUser->hasRole(User::ROLE_SUPER_ADMIN) || $currentUser->hasRole(User::ROLE_ADMIN))
-
                         <x-nav-link href="{{ route('membre.index') }}" :active="request()->routeIs('membre.index')">
                             {{ __('Membre') }}
                         </x-nav-link>
-                        @endif
+                        <x-nav-link href="{{ route('transfert.index') }}" :active="request()->routeIs('transfert.index')">
+                            {{ __('Transfert') }}
+                        </x-nav-link>
+                    @endif
                     {{-- ******************************************************** --}}
                 </div>
             </div>

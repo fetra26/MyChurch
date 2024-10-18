@@ -10,6 +10,7 @@ use App\Http\Controllers\MissionController;
 use App\Http\Controllers\FederationController;
 use App\Http\Controllers\MembreController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\TransfertController;
 use App\Models\District;
 use Illuminate\Support\Facades\Route;
 
@@ -49,3 +50,4 @@ Route::get('membre/{id}/asignService', [MembreController::class, 'asignService']
 Route::post('membre/storeService', [MembreController::class, 'storeService'])->name('membre.storeService');
 
 Route::resource('role', RoleController::class);
+Route::resource('transfert', TransfertController::class);

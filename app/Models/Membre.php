@@ -57,10 +57,33 @@ class Membre extends Model
     }
 
     public static function membersWithService(string $serviceLabel)
-{
-    return self::whereHas('services', function ($query) use ($serviceLabel) {
-        $query->where('libelleServ', $serviceLabel);
-    })->get();
-}
-
+    {
+        return self::whereHas('services', function ($query) use ($serviceLabel) {
+            $query->where('libelleServ', $serviceLabel);
+        })->get();
+    }
+    // Relationship to access the churches through transfers
+    public function eglisesTransferts()
+    {
+        return $this->belongsToMany(Eglise::class, 'transferts')
+                    ->withPivot(
+                        'date_demande_transfert', 
+                        'date_reponse_demande', 
+                        'status', 
+                        'source_responsable_id', 
+                        'destination_responsable_id',
+                        'eglise_name',
+                        'membre_name',
+                        'egliseSource_name',
+                        'egliseDest_name',
+                        'source_responsable_name',
+                        'destination_responsable_name',
+                        )            
+                    ->withTimestamps();
+    }
+// Relationship to access all transfers related to this member
+    public function transferts()
+    {
+        return $this->hasMany(Transfert::class);
+    }
 }

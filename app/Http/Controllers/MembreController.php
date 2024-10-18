@@ -31,7 +31,6 @@ class MembreController extends Controller
             $services = Service::latest()->get();
             $roles = Role::latest()->get();
             if ($currentUser->eglise) {
-                # code...
                 $egliseId = $currentUser->eglise->id; 
                 if ($request->ajax()) {
                     $data = Membre::with('contact', 'status', 'eglise')
