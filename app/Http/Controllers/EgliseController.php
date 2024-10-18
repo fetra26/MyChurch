@@ -23,7 +23,7 @@ class EgliseController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             $districts = District::latest()->get();
             $types = Type::latest()->get();
             $status = Status::latest()->get();
@@ -87,7 +87,7 @@ class EgliseController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             $contact = Contact::updateOrCreate([
 
@@ -146,7 +146,7 @@ class EgliseController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             $eglise = Eglise::with('contact')->with('district')->with('type')->find($id);
             return response()->json($eglise);
@@ -162,7 +162,7 @@ class EgliseController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             $eglise = Eglise::with('contact')->with('district')->with('type')->find($id);
             return response()->json($eglise);
@@ -186,7 +186,7 @@ class EgliseController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             $eglise = Eglise::find($id);
             $contact = $eglise->contact();
@@ -205,7 +205,7 @@ class EgliseController extends Controller
     public function addMembre($id)
     {
         $currentUser = Auth::user();
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             $eglise = Eglise::find($id);
             return response()->json($eglise);
@@ -222,7 +222,7 @@ class EgliseController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
 
             $contact = Contact::updateOrCreate([
 

@@ -18,7 +18,7 @@ class FederationController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             if ($request->ajax()) {
 
                 $data = Federation::with('contact')->latest()->get();
@@ -78,7 +78,7 @@ class FederationController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             $contact = Contact::updateOrCreate([
 
@@ -123,7 +123,7 @@ class FederationController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             $federation = Federation::with('contact')->find($id);
             return response()->json($federation);
@@ -139,7 +139,7 @@ class FederationController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             $federation = Federation::with('contact')->find($id);
             return response()->json($federation);
@@ -163,7 +163,7 @@ class FederationController extends Controller
     {        
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             $federation = Federation::find($id);
             $contact = $federation->contact();
@@ -181,7 +181,7 @@ class FederationController extends Controller
     public function addDistrict($id)
     {
         $currentUser = Auth::user();
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             $federation = Federation::with('contact')->find($id);
             return response()->json($federation);
@@ -198,7 +198,7 @@ class FederationController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             // dd($request);
             $district = new District(['nomDist' => $request->nomDist]);
  

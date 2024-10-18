@@ -21,7 +21,7 @@ class DistrictController extends Controller
     {
         $currentUser = Auth::user();
 
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             $federations = Federation::with('contact')->latest()->get();
             $missions = Mission::with('contact')->latest()->get();
                         $pasteurs = Membre::membersWithService('Pasteur');
@@ -80,7 +80,7 @@ class DistrictController extends Controller
     {
         $currentUser = Auth::user();
 
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             $request->validate([
                 'federation_id' => 'nullable|exists:federations,id',
                 'mission_id' => 'nullable|exists:missions,id',
@@ -138,7 +138,7 @@ class DistrictController extends Controller
     public function show($id)
     {
         $currentUser = Auth::user();
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             $district = District::with('federation')->with('mission')->find($id);
             return response()->json($district);
         }else {
@@ -153,7 +153,7 @@ class DistrictController extends Controller
     {
         $currentUser = Auth::user();
 
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
 
             $district = District::with('federation')->with('mission')->find($id);
             return response()->json($district);
@@ -177,7 +177,7 @@ class DistrictController extends Controller
     {
         $currentUser = Auth::user();
 
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
 
             District::find($id)->delete();
             return response()->json(['success'=>'District supprimé avec succès.']);
@@ -189,7 +189,7 @@ class DistrictController extends Controller
     
     public function asignPasteur(Request $request){
         $currentUser = Auth::user();
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             $district = District::find($request->id);
 
@@ -200,7 +200,7 @@ class DistrictController extends Controller
     }
     public function storePasteur(Request $request){
         $currentUser = Auth::user();
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             $district = District::find($request->district_id);
             $pasteur = Membre::find($request->pasteur_id);

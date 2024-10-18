@@ -17,7 +17,7 @@ class StatusController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             if ($request->ajax()) {
     
                 $data = Status::latest()->get();
@@ -65,7 +65,7 @@ class StatusController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             Status::updateOrCreate([
 
                         'id' => $request->status_id
@@ -94,7 +94,7 @@ class StatusController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
 
         }else {
             return redirect('dashboard');
@@ -108,7 +108,7 @@ class StatusController extends Controller
     {
         $currentUser = Auth::user();
         
-            if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+            if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             $status = Status::find($id);
 
             return response()->json($status);
@@ -133,7 +133,7 @@ class StatusController extends Controller
     {
         $currentUser = Auth::user();
             
-            if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+            if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             Status::find($id)->delete();
             return response()->json(['success'=>'Statut supprimé avec succès.']);
             

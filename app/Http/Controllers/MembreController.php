@@ -30,49 +30,89 @@ class MembreController extends Controller
             $status = Status::latest()->get();
             $services = Service::latest()->get();
             $roles = Role::latest()->get();
-            
-            if ($request->ajax()) {
-                $data = Membre::with('contact')->with('status')->with('eglise')->latest()->get();
+            if ($currentUser->eglise) {
+                # code...
+                $egliseId = $currentUser->eglise->id; 
+                if ($request->ajax()) {
+                    $data = Membre::with('contact', 'status', 'eglise')
+                                    ->where('id_eglise', $egliseId)
+                                    ->latest()
+                                    ->get();
+    
+                    return DataTables::of($data)
+                            ->addIndexColumn()
+                            ->addColumn('action', function($row){
+                               $btn = '
+                                <div class="dropdown">
+                                    <a
+                                        class="dropdown-toggle"
+                                        href="javascript:void(0)"
+                                        role="button"
+                                        id="dropdownMenuicon"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                    >
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuicon">
+                                        <li><a data-id="'.$row->id.'" class="dropdown-item details showMembre" href="javascript:void(0)"> <i class="fa fa-eye text-info pe-2"></i> Details</a></li>
+                                        <li><a data-id="'.$row->id.'" class="dropdown-item edit editMembre" href="javascript:void(0)"> <i class="fa fa-pencil text-warning pe-2"></i> Modifier</a></li>
+                                        <li><a data-id="'.$row->id.'" class="dropdown-item deleteMembre" href="javascript:void(0)"> <i class="fa fa-trash text-danger pe-2"></i> Supprimer</a></li>
+                                        <li><a data-id="'.$row->id.'" class="dropdown-item addBaptism" href="javascript:void(0)"> <i class="fa fa-plus text-dark pe-2"></i> Ajouter une date de baptême</a></li>
+                                        <li><a data-id="'.$row->id.'" class="dropdown-item asignService" href="javascript:void(0)"> <i class="fa fa-tasks text-success pe-2"></i> Assigner un service</a></li>
+                                        <li><a data-id="'.$row->id.'" class="dropdown-item transfertMembre" href="javascript:void(0)"> <i class="fa fa-share text-primary pe-2"></i> Transferer</a></li>
+                                    </ul>
+                                </div>';
+                            //    $btn = '<div class="dropdown">
+                            //             <a href="javascript:void(0)" class="dropdown-toggle hidden-arrow" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            //                 <i class="fas fa-ellipsis-v fa-lg text-dark"></i>
+                            //             </a>
+                            //             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            //                 <li><a href="javascript:void(0)" data-id="'.$row->id.'" class="details btn showMembre"><i class="fa fa-eye text-info pe-2"></i> Details</a></li>
+                            //                 <li><a href="javascript:void(0)" data-id="'.$row->id.'" class="edit btn  editMembre"><i class="fa fa-pencil text-warning pe-2"></i> Modifier</a></li>
+                            //                 <li><a href="javascript:void(0)" data-id="'.$row->id.'" class="btn deleteMembre"><i class="fa fa-trash text-danger pe-2"></i> Supprimer</a></li>
+                            //                 <li><a href="javascript:void(0)" data-id="'.$row->id.'" class="btn addBaptism"><i class="fa fa-plus text-dark pe-2"></i> Ajouter une date de baptême</a></li>
+                            //                 <li><a href="javascript:void(0)" data-id="'.$row->id.'" class="btn asignService"><i class="fa fa-tasks text-success pe-2"></i> Assigner un service</a></li>
+                            //                 <li><a href="javascript:void(0)" data-id="'.$row->id.'" class="btn transfertMembre"><i class="fa fa-share text-primary pe-2"></i> Transferer</a></li>
+                            //             </ul>
+                            //     </div>';
 
-                return DataTables::of($data)
-                        ->addIndexColumn()
-                        ->addColumn('action', function($row){
-
-                            $btn = '<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Details" class="details btn showMembre"><i class="fa fa-eye text-info"></i></a>';
-                            $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Modifier" class="edit btn  editMembre"><i class="fa fa-pencil text-warning"></i></a>';
-
-                            $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Supprimer" class="btn deleteMembre"><i class="fa fa-trash text-danger"></i></a>';
-                            $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Ajouter une date de baptême" class="btn addBaptism"><i class="fa fa-plus text-dark"></i></a>';
-                            $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Assigner un service" class="btn btn-sm asignService"><i class="fa fa-tasks text-success"></i></a>';
-
-                            return $btn;
-                        })
-                        ->editColumn('nom', function($row) {
-                            return ucfirst($row->nom);
-                        })
-                        ->editColumn('prenom', function($row) {
-                            return ucfirst($row->prenom);
-                        })
-                        ->editColumn('sexe', function($row) {
-                            return ($row->sexe == 0)? 'F' : 'H';
-                        })
-                        ->editColumn('nomEglise', function($row) {
-                            return ($row->eglise) ? ucfirst($row->eglise->nomEglise) : '';
-                        })
-                        ->editColumn('libelleStat', function($row) {
-                            return ($row->status) ? ucfirst($row->status->libelleStat) : '';
-                        })
-                        ->editColumn('adresse', function($row) {
-                            return ($row->contact) ? ucfirst($row->contact->adresse) : '';
-                        }) 
-                        ->editColumn('created_at', function($row) {
-                            return date('d/m/Y H:i', strtotime($row->created_at));
-                        })
-                        ->editColumn('updated_at', function($row) {
-                            return date('d/m/Y H:i', strtotime($row->updated_at));
-                        })
-                        ->rawColumns(['action'])
-                        ->make(true);
+                                // $btn = '<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Details" class="details btn showMembre"><i class="fa fa-eye text-info"></i></a>';
+                                // $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Modifier" class="edit btn  editMembre"><i class="fa fa-pencil text-warning"></i></a>';
+    
+                                // $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Supprimer" class="btn deleteMembre"><i class="fa fa-trash text-danger"></i></a>';
+                                // $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Ajouter une date de baptême" class="btn addBaptism"><i class="fa fa-plus text-dark"></i></a>';
+                                // $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Assigner un service" class="btn btn-sm asignService"><i class="fa fa-tasks text-success"></i></a>';
+                                // $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Transferer ce membre" class="btn btn-sm transfertMembre"><i class="fa fa-share text-primary"></i></a>';
+    
+                                return $btn;
+                            })
+                            ->editColumn('nom', function($row) {
+                                return ucfirst($row->nom);
+                            })
+                            ->editColumn('prenom', function($row) {
+                                return ucfirst($row->prenom);
+                            })
+                            ->editColumn('sexe', function($row) {
+                                return ($row->sexe == 0)? 'F' : 'H';
+                            })
+                            ->editColumn('nomEglise', function($row) {
+                                return ($row->eglise) ? ucfirst($row->eglise->nomEglise) : '';
+                            })
+                            ->editColumn('libelleStat', function($row) {
+                                return ($row->status) ? ucfirst($row->status->libelleStat) : '';
+                            })
+                            ->editColumn('adresse', function($row) {
+                                return ($row->contact) ? ucfirst($row->contact->adresse) : '';
+                            }) 
+                            ->editColumn('created_at', function($row) {
+                                return date('d/m/Y H:i', strtotime($row->created_at));
+                            })
+                            ->editColumn('updated_at', function($row) {
+                                return date('d/m/Y H:i', strtotime($row->updated_at));
+                            })
+                            ->rawColumns(['action'])
+                            ->make(true);
+                }
             }
 
             return view('membres.show',compact('eglises', 'pasteurs','status', 'services','roles'));

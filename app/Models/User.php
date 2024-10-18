@@ -76,4 +76,9 @@ class User extends Authenticatable
     {
         return $this->role === $role;
     }
+    
+    public function eglise()
+    {
+        return $this->belongsTo(Eglise::class, 'id_eglise');
+    }
 }

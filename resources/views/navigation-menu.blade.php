@@ -19,8 +19,8 @@
                         use App\Models\User;
                         $currentUser = Auth::user();
                     @endphp
-                    {{-- MENU FOR ADMINS ONLY --}}
-                    @if($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN))
+                    {{-- MENU FOR SUPER ADMINS ONLY --}}
+                    @if($currentUser->hasRole(User::ROLE_SUPER_ADMIN))
                         <x-nav-link href="{{ route('status.index') }}" :active="request()->routeIs('status.index')">
                             {{ __('Statut') }}
                         </x-nav-link>
@@ -42,13 +42,16 @@
                         <x-nav-link href="{{ route('eglise.index') }}" :active="request()->routeIs('eglise.index')">
                             {{ __('Eglise') }}
                         </x-nav-link>
-                        <x-nav-link href="{{ route('membre.index') }}" :active="request()->routeIs('membre.index')">
-                            {{ __('Membre') }}
-                        </x-nav-link>
                         <x-nav-link href="{{ route('role.index') }}" :active="request()->routeIs('role.index')">
                             {{ __('Rôle') }}
                         </x-nav-link>
-                    @endif
+                        @endif
+                    @if($currentUser->hasRole(User::ROLE_SUPER_ADMIN) || $currentUser->hasRole(User::ROLE_ADMIN))
+
+                        <x-nav-link href="{{ route('membre.index') }}" :active="request()->routeIs('membre.index')">
+                            {{ __('Membre') }}
+                        </x-nav-link>
+                        @endif
                     {{-- ******************************************************** --}}
                 </div>
             </div>

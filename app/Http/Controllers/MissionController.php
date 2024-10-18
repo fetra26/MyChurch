@@ -19,7 +19,7 @@ class MissionController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             if ($request->ajax()) {
 
@@ -78,7 +78,7 @@ class MissionController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             $contact = Contact::updateOrCreate([
 
@@ -123,7 +123,7 @@ class MissionController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             
             $mission = Mission::with('contact')->find($id);
             return response()->json($mission);
@@ -139,7 +139,7 @@ class MissionController extends Controller
     {
         $currentUser = Auth::user();
             
-            if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+            if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             
             $mission = Mission::with('contact')->find($id);
             return response()->json($mission);
@@ -163,7 +163,7 @@ class MissionController extends Controller
     {   
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             $mission = Mission::find($id);
             $contact = $mission->contact();
@@ -182,7 +182,7 @@ class MissionController extends Controller
     public function addDistrict($id)
     {
         $currentUser = Auth::user();
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         
             $mission = Mission::with('contact')->find($id);
             return response()->json($mission);
@@ -199,7 +199,7 @@ class MissionController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             // dd($request);
             $district = new District(['nomDist' => $request->nomDist]);
  

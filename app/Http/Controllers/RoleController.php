@@ -16,7 +16,7 @@ class RoleController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             if ($request->ajax()) {
     
                 $data = Role::latest()->get();
@@ -63,7 +63,7 @@ class RoleController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             Role::updateOrCreate([
 
                         'id' => $request->role_id
@@ -92,7 +92,7 @@ class RoleController extends Controller
     {
         $currentUser = Auth::user();
         
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
 
         }else {
             return redirect('dashboard');
@@ -106,7 +106,7 @@ class RoleController extends Controller
     {
         $currentUser = Auth::user();
         
-            if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+            if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             $role = Role::find($id);
 
             return response()->json($role);
@@ -131,7 +131,7 @@ class RoleController extends Controller
     {
         $currentUser = Auth::user();
             
-        if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
+        if ($currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
         Role::find($id)->delete();
         return response()->json(['success'=>'Role supprimé avec succès.']);
         

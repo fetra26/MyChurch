@@ -31,4 +31,9 @@ class Eglise extends Model
     {
         return $this->hasMany(Membre::class,'id_eglise');
     }
+    public function responsables()
+    {
+        return $this->hasMany(User::class,'id_eglise')
+        ->whereIn('role', [User::ROLE_ADMIN, User::ROLE_SUPER_ADMIN]);
+    }
 }
