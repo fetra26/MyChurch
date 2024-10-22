@@ -23,7 +23,7 @@ class MembreController extends Controller
     public function index(Request $request)
     {
         $currentUser = Auth::user();
-        
+
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             $eglises = Eglise::latest()->get();
             $pasteurs = Membre::membersWithService('Pasteur');
@@ -31,13 +31,13 @@ class MembreController extends Controller
             $services = Service::latest()->get();
             $roles = Role::latest()->get();
             if ($currentUser->eglise) {
-                $egliseId = $currentUser->eglise->id; 
+                $egliseId = $currentUser->eglise->id;
                 if ($request->ajax()) {
                     $data = Membre::with('contact', 'status', 'eglise')
                                     ->where('id_eglise', $egliseId)
                                     ->latest()
                                     ->get();
-    
+
                     return DataTables::of($data)
                             ->addIndexColumn()
                             ->addColumn('action', function($row){
@@ -77,12 +77,12 @@ class MembreController extends Controller
 
                                 // $btn = '<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Details" class="details btn showMembre"><i class="fa fa-eye text-info"></i></a>';
                                 // $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip"  data-id="'.$row->id.'" title="Modifier" class="edit btn  editMembre"><i class="fa fa-pencil text-warning"></i></a>';
-    
+
                                 // $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Supprimer" class="btn deleteMembre"><i class="fa fa-trash text-danger"></i></a>';
                                 // $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Ajouter une date de baptême" class="btn addBaptism"><i class="fa fa-plus text-dark"></i></a>';
                                 // $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Assigner un service" class="btn btn-sm asignService"><i class="fa fa-tasks text-success"></i></a>';
                                 // $btn = $btn.'<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Transferer ce membre" class="btn btn-sm transfertMembre"><i class="fa fa-share text-primary"></i></a>';
-    
+
                                 return $btn;
                             })
                             ->editColumn('nom', function($row) {
@@ -94,15 +94,12 @@ class MembreController extends Controller
                             ->editColumn('sexe', function($row) {
                                 return ($row->sexe == 0)? 'F' : 'H';
                             })
-                            ->editColumn('nomEglise', function($row) {
-                                return ($row->eglise) ? ucfirst($row->eglise->nomEglise) : '';
-                            })
                             ->editColumn('libelleStat', function($row) {
                                 return ($row->status) ? ucfirst($row->status->libelleStat) : '';
                             })
                             ->editColumn('adresse', function($row) {
                                 return ($row->contact) ? ucfirst($row->contact->adresse) : '';
-                            }) 
+                            })
                             ->editColumn('created_at', function($row) {
                                 return date('d/m/Y H:i', strtotime($row->created_at));
                             })
@@ -115,7 +112,7 @@ class MembreController extends Controller
             }
 
             return view('membres.show',compact('eglises', 'pasteurs','status', 'services','roles'));
-            
+
         }else {
             return redirect('dashboard');
         }
@@ -135,9 +132,8 @@ class MembreController extends Controller
     public function store(Request $request)
     {
         $currentUser = Auth::user();
-        
+
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
-            // dd($request);
             $contact = Contact::updateOrCreate([
 
                 'id' => $request->contact_id
@@ -167,9 +163,9 @@ class MembreController extends Controller
             $status = Status::find($request->status_id);
 
             $membre->status()->associate($status);
+            $eglise_id = $currentUser->eglise->id;
+            $eglise = Eglise::find($eglise_id);
 
-            $eglise = Eglise::find($request->eglise_id);
-            
             $membre->eglise()->associate($eglise);
             $membre->save();
 
@@ -185,9 +181,9 @@ class MembreController extends Controller
     public function show($id)
     {
         $currentUser = Auth::user();
-        
+
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
-        
+
             $membre = Membre::with('contact')->with('status')->with('eglise')->find($id);
             return response()->json($membre);
         }else {
@@ -201,9 +197,9 @@ class MembreController extends Controller
     public function edit($id)
     {
         $currentUser = Auth::user();
-        
+
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
-        
+
             $membre = Membre::with('contact')->with('status')->with('eglise')->find($id);
             return response()->json($membre);
         }else {
@@ -234,7 +230,7 @@ class MembreController extends Controller
             return redirect('dashboard');
         }
     }
-     
+
      /**
      * Store a newly created resource in storage.
      */
@@ -242,7 +238,7 @@ class MembreController extends Controller
     {
         $currentUser = Auth::user();
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
-        
+
             $membre = Membre::find($id);
             return response()->json($membre);
         }else {
@@ -250,14 +246,14 @@ class MembreController extends Controller
         }
     }
 
-    
+
     /**
      * Store a newly created resource in storage.
      */
     public function storeBaptism(Request $request)
     {
         $currentUser = Auth::user();
-        
+
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
 
             $dateBapt = ($request->dateBapt) ? Carbon::createFromFormat('d/m/Y', $request->dateBapt)->format('Y-m-d') : NULL;
@@ -281,7 +277,7 @@ class MembreController extends Controller
     public function asignService(Request $request){
         $currentUser = Auth::user();
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
-        
+
             $membre = Membre::find($request->id);
 
             return response()->json($membre);
@@ -292,7 +288,7 @@ class MembreController extends Controller
     public function storeService(Request $request){
         $currentUser = Auth::user();
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
-        
+
             $membre = Membre::find($request->membre_id);
             $service = Service::find($request->id_serv);
             $role = NULL;

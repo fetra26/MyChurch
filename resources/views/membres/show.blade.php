@@ -1,7 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Membres') }}
+            <?php
+             $currentUser = Auth::user();
+            ?>
+            {{ __('Membres de l\'eglise') }} {{$currentUser->eglise->nomEglise}} (District {{$currentUser->eglise->district->nomDist}})
         </h2>
     </x-slot>
 
@@ -14,7 +17,7 @@
                 <strong class="alert-success-text"></strong>
             </div>
             <div class="mt-10 sm:mt-0 cd__main">
-                <a class="btn btn-primary mb-1" href="javascript:void(0)" id="createNewMembre" data-bs-toggle="tooltip" title="Nouvelle Membre"><i class="fa fa-plus"></i></a>
+                <a class="btn btn-primary mb-1" href="javascript:void(0)" id="createNewMembre" data-bs-toggle="tooltip" title="Nouveau Membre"><i class="fa fa-plus"></i></a>
                 <table class="table table-stripped data-table" style="width:100%">
                     <thead>
                         <tr>
@@ -22,7 +25,6 @@
                             <th>Nom</th>
                             <th>Prénom(s)</th>
                             <th>Sexe</th>
-                            <th>Eglise</th>
                             <th>Statut</th>
                             <th>Adresse</th>
                             <th>Date de création</th>
@@ -53,7 +55,7 @@
                             <ul></ul>
                         </div>
 
-                        <div class="form-group mt-2" id="DistSelect">
+                       {{--  <div class="form-group mt-2" id="DistSelect">
                             <select class="form-select mt-1" aria-label="Default select example" id="eglise_id" name="eglise_id">
                                 <option selected value="">Choisir l'eglise</option>
                                 @forelse ($eglises as $eglise)
@@ -62,7 +64,7 @@
 
                                 @endforelse
                             </select>
-                        </div>
+                        </div> --}}
                         <div class="form-group">
                             <label for="nom" class="col-sm control-label">Nom du membre:</label>
                             <div class="col-sm-12">
@@ -178,21 +180,21 @@
                                 <input type="text" class="form-control" id="lieuBapt" name="lieuBapt" value="" maxlength="50">
                             </div>
                         </div>
-                              
+
                         <label for="">Date du bapteme</label>
                       <input id="datepicker1" name="dateBapt"/>
                         <div class="form-group mt-1" id="pstSelect">
-                            
+
                             <select class="form-select mt-2 mb-2" aria-label="Default select example" id="id_pst" name="id_pst">
                                 <option selected value="">Choisir le pasteur</option>
                                 @forelse ($pasteurs as $pst)
                                 <option value="{{$pst->id}}">{{$pst->nom}} {{$pst->prenom}}</option>
                                 @empty
-                                
+
                                 @endforelse
                             </select>
                         </div>
-                  
+
                         <div class="form-group mb-3">
                             <label for="messageBapt" class="form-label">Message du bapteme</label>
                             <textarea class="form-control" id="messageBapt" name="messageBapt" rows="3"></textarea>
@@ -211,7 +213,7 @@
                             </label>
                           </div>
 
-                  
+
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success mt-2" id="saveBtnBapt" value="create"> Enregistrer
@@ -244,34 +246,34 @@
                                 <input type="text" class="form-control" id="nomMembreServ" name="nomMembreServ" maxlength="50" disabled>
                             </div>
                         </div>
-                       
+
                         <label for="">Date de début</label>
                         <input id="datepickerDebut" name="dateDebut" required/>
                         <label for="">Date de fin</label>
                         <input id="datepickerFin" name="dateFin" required/>
                         <div class="form-group mt-1" id="servSelect">
-                            
+
                             <select class="form-select mt-2 mb-2" aria-label="Default select example" id="id_serv" name="id_serv">
                                 <option selected value="">Choisir le service</option>
                                 @forelse ($services as $service)
                                 <option value="{{$service->id}}">{{$service->libelleServ}}</option>
                                 @empty
-                                
+
                                 @endforelse
                             </select>
                         </div>
                         <div class="form-group mt-1" id="roleSelect">
-                            
+
                             <select class="form-select mt-2 mb-2" aria-label="Default select example" id="role_id" name="role_id">
                                 <option selected value="">Choisir le rôle</option>
                                 @forelse ($roles as $role)
                                 <option value="{{$role->id}}">{{$role->libelleRole}}</option>
                                 @empty
-                                
+
                                 @endforelse
                             </select>
                         </div>
-                  
+
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success mt-2" id="saveBtnServ" value="create"> Enregistrer
@@ -381,7 +383,6 @@
                 {data: 'nom', name: 'nom'},
                 {data: 'prenom', name: 'prenom'},
                 {data: 'sexe', name: 'sexe'},
-                {data: 'nomEglise', name: 'nomEglise'},
                 {data: 'libelleStat', name: 'libelleStat'},
                 {data: 'adresse', name: 'adresse'},
                 {data: 'created_at', name: 'created_at'},
@@ -421,7 +422,7 @@
         $('body').on('click', '.showMembre', function () {
           var membre_id = $(this).data('id');
           $.get("{{ route('membre.index') }}" +'/' + membre_id, function (data) {
-            
+
             if (data.eglise) {
                 $('.nomEglise').show();
                   $('.eglise_id').text(data.eglise.nomEglise);
@@ -434,7 +435,7 @@
             $('.prenom').text(data.prenom);
             $('.sexe').text((data.sexe == 0) ? 'Femme' : 'Homme');
 
-            let dateStr = data.datenais; 
+            let dateStr = data.datenais;
             let dateParts = dateStr.split('-');
             let formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
             $('.datenais').text(formattedDate);
@@ -458,7 +459,7 @@
           var membre_id = $(this).data('id');
           $.get("{{ route('membre.index') }}" +'/' + membre_id +'/addBaptism', function (data) {
             console.log(data.nom +' '+ data.prenom);
-            
+
               $('#modelHeadingBapt').html(" Ajouter un bapteme à ce Membre");
               $('#saveBtnBapt').val("add-membre-baptism");
               $('#baptismModel').modal('show');
@@ -475,7 +476,7 @@
           var membre_id = $(this).data('id');
           $.get("{{ route('membre.index') }}" +'/' + membre_id +'/asignService', function (data) {
             console.log(data.nom +' '+ data.prenom);
-            
+
               $('#modelHeadingServ').html(" Assigner un service à ce Membre");
               $('#saveBtnServ').val("add-membre-service");
               $('#serviceModel').modal('show');
@@ -495,9 +496,9 @@
                 $('#saveBtn').val("edit-membre");
                 $('#ajaxModel').modal('show');
                 $('#membre_id').val(data.id);
-                if (data.eglise) {
+             /*    if (data.eglise) {
                     $('#eglise_id').val(data.eglise.id);
-                }
+                } */
                 if (data.status ) {
                     $('#status_id').val(data.status.id);
                 }
@@ -581,7 +582,7 @@
 
             let formData = new FormData(this);
             console.log(formData);
-            
+
             $('#saveBtnBapt').html('En cours...');
 
             $.ajax({
@@ -620,7 +621,7 @@
 
             let formData = new FormData(this);
             console.log(formData);
-            
+
             $('#saveBtnServ').html('En cours...');
 
             $.ajax({

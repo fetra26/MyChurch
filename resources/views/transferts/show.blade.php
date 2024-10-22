@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Historique de transferts') }}
+            {{ __('Transferts') }}
         </h2>
     </x-slot>
 
@@ -14,19 +14,19 @@
                 <strong class="alert-success-text"></strong>
             </div>
             <div class="mt-10 sm:mt-0 cd__main">
-                <a class="btn btn-primary mb-1" href="javascript:void(0)" id="createNewMembre" data-bs-toggle="tooltip" title="Nouvelle Membre"><i class="fa fa-plus"></i></a>
+                <a class="btn btn-primary mb-1" href="javascript:void(0)" id="createNewTransfert" data-bs-toggle="tooltip" title="Nouvelle demande de Transfert"><i class="fa fa-plus"></i></a>
                 <table class="table table-stripped data-table" style="width:100%">
                     <thead>
                         <tr>
                             <th>N°</th>
-                            <th>Nom</th>
-                            <th>Prénom(s)</th>
-                            <th>Sexe</th>
-                            <th>Membre de</th>
-                            <th>Transferé à</th>
-                            <th>Adresse</th>
+                            <th>Nom et Prénom(s) du membre</th>
+                            <th>Eglise demandeur</th>
+                            <th>Eglise recepteur</th>
                             <th>Date de demande</th>
                             <th>Date de reponse</th>
+                            <th>Reponse</th>
+                            <th>Responsable demandeur</th>
+                            <th>Responsable recepteur</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -44,26 +44,35 @@
                     <h4 class="modal-title" id="modelHeading"></h4>
                 </div>
                 <div class="modal-body">
-                    <form id="membreForm" name="membreForm" class="form-horizontal">
-                       <input type="hidden" name="membre_id" id="membre_id">
-                       <input type="hidden" name="contact_id" id="contact_id">
+                    <form id="transfertForm" name="transfertForm" class="form-horizontal">
+                       <input type="hidden" name="transfert_id" id="transfert_id">
                        @csrf
 
                         <div class="alert alert-danger print-error-msg" style="display:none">
                             <ul></ul>
                         </div>
 
-                        <div class="form-group mt-2" id="DistSelect">
-                            <select class="form-select mt-1" aria-label="Default select example" id="eglise_id" name="eglise_id">
-                                <option selected value="">Choisir l'eglise</option>
-                                @forelse ($eglises as $eglise)
-                                    <option value="{{$eglise->id}}">{{$eglise->nomEglise}}</option>
+                        <div class="form-group mt-2" id="sourceSelect">
+                            <select class="form-select mt-1" aria-label="Default select example" id="egliseSource_id" name="egliseSource_id">
+                                <option selected value="">Choisir l'eglise recepteur</option>
+                                @forelse ($egliseSources as $egliseSource)
+                                    <option value="{{$egliseSource->id}}">{{$egliseSource->nomEglise}}</option>
                                 @empty
 
                                 @endforelse
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group mt-2" id="membreSelect">
+                            <select class="form-select mt-1" aria-label="Default select example" id="membre_id" name="membre_id">
+                                <option selected value="">Choisir le membre</option>
+                                @forelse ($membres as $membre)
+                                    <option value="{{$membre->id}}">{{$membre->nom}} {{$membre->prenom}}</option>
+                                @empty
+
+                                @endforelse
+                            </select>
+                        </div>
+                       <!-- <div class="form-group">
                             <label for="nom" class="col-sm control-label">Nom du membre:</label>
                             <div class="col-sm-12">
                                 <input type="text" class="form-control" id="nom" name="nom" value="" maxlength="50" required>
@@ -126,9 +135,9 @@
                             <div class="col-sm-12">
                                 <input type="text" class="form-control" id="codePost" name="codePost" value="" maxlength="50">
                             </div>
-                        </div>
+                        </div> -->
 
-                        <div class="form-group mt-1" id="statutSelect">
+                        {{-- <div class="form-group mt-1" id="statutSelect">
 
                             <select class="form-select mt-2 mb-2" aria-label="Default select example" id="status_id" name="status_id">
                                 <option selected value="">Choisir le statut</option>
@@ -138,11 +147,11 @@
 
                                 @endforelse
                             </select>
-                        </div>
+                        </div> --}}
 
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-success mt-2" id="saveBtn" value="create"> Enregistrer
+                        <button type="submit" class="btn btn-success mt-2" id="saveBtn" value="create"> Envoyer
                         </button>
                         <button type="button" class="btn btn-danger mt-2 close" data-bs-dismiss="modal"> Annuler
                         </button>
@@ -167,9 +176,9 @@
                             <ul></ul>
                         </div>
                         <div class="form-group">
-                            <label for="nomMembre" class="col-sm control-label">Nom et Prénoms du membre:</label>
+                            <label for="nomTransfert" class="col-sm control-label">Nom et Prénoms du membre:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="nomMembre" name="nomMembre" maxlength="50" disabled>
+                                <input type="text" class="form-control" id="nomTransfert" name="nomTransfert" maxlength="50" disabled>
                             </div>
                         </div>
                         <div class="form-group">
@@ -178,21 +187,21 @@
                                 <input type="text" class="form-control" id="lieuBapt" name="lieuBapt" value="" maxlength="50">
                             </div>
                         </div>
-                              
+
                         <label for="">Date du bapteme</label>
                       <input id="datepicker1" name="dateBapt"/>
-                        <div class="form-group mt-1" id="pstSelect">
-                            
+                        {{-- <div class="form-group mt-1" id="pstSelect">
+
                             <select class="form-select mt-2 mb-2" aria-label="Default select example" id="id_pst" name="id_pst">
                                 <option selected value="">Choisir le pasteur</option>
                                 @forelse ($pasteurs as $pst)
                                 <option value="{{$pst->id}}">{{$pst->nom}} {{$pst->prenom}}</option>
                                 @empty
-                                
+
                                 @endforelse
                             </select>
-                        </div>
-                  
+                        </div> --}}
+
                         <div class="form-group mb-3">
                             <label for="messageBapt" class="form-label">Message du bapteme</label>
                             <textarea class="form-control" id="messageBapt" name="messageBapt" rows="3"></textarea>
@@ -211,7 +220,7 @@
                             </label>
                           </div>
 
-                  
+
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success mt-2" id="saveBtnBapt" value="create"> Enregistrer
@@ -239,39 +248,39 @@
                             <ul></ul>
                         </div>
                         <div class="form-group">
-                            <label for="nomMembreServ" class="col-sm control-label">Nom et Prénoms du membre:</label>
+                            <label for="nomTransfertServ" class="col-sm control-label">Nom et Prénoms du membre:</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="nomMembreServ" name="nomMembreServ" maxlength="50" disabled>
+                                <input type="text" class="form-control" id="nomTransfertServ" name="nomTransfertServ" maxlength="50" disabled>
                             </div>
                         </div>
-                       
+
                         <label for="">Date de début</label>
                         <input id="datepickerDebut" name="dateDebut" required/>
                         <label for="">Date de fin</label>
                         <input id="datepickerFin" name="dateFin" required/>
-                        <div class="form-group mt-1" id="servSelect">
-                            
+                        {{-- <div class="form-group mt-1" id="servSelect">
+
                             <select class="form-select mt-2 mb-2" aria-label="Default select example" id="id_serv" name="id_serv">
                                 <option selected value="">Choisir le service</option>
                                 @forelse ($services as $service)
                                 <option value="{{$service->id}}">{{$service->libelleServ}}</option>
                                 @empty
-                                
+
                                 @endforelse
                             </select>
-                        </div>
-                        <div class="form-group mt-1" id="roleSelect">
-                            
+                        </div> --}}
+                        {{-- <div class="form-group mt-1" id="roleSelect">
+
                             <select class="form-select mt-2 mb-2" aria-label="Default select example" id="role_id" name="role_id">
                                 <option selected value="">Choisir le rôle</option>
                                 @forelse ($roles as $role)
                                 <option value="{{$role->id}}">{{$role->libelleRole}}</option>
                                 @empty
-                                
+
                                 @endforelse
                             </select>
-                        </div>
-                  
+                        </div> --}}
+
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success mt-2" id="saveBtnServ" value="create"> Enregistrer
@@ -375,17 +384,17 @@
             },
             processing: true,
             serverSide: true,
-            ajax: "{{ route('membre.index') }}",
+            ajax: "{{ route('transfert.index') }}",
             columns: [
                 {data: 'id', name: 'id'},
-                {data: 'nom', name: 'nom'},
-                {data: 'prenom', name: 'prenom'},
-                {data: 'sexe', name: 'sexe'},
-                {data: 'nomEglise', name: 'nomEglise'},
-                {data: 'libelleStat', name: 'libelleStat'},
-                {data: 'adresse', name: 'adresse'},
-                {data: 'created_at', name: 'created_at'},
-                {data: 'updated_at', name: 'updated_at'},
+                {data: 'nomComplet', name: 'nomComplet'},
+                {data: 'destination', name: 'destination'},
+                {data: 'source', name: 'source'},
+                {data: 'dateDemande', name: 'dateDemande'},
+                {data: 'dateReponse', name: 'dateReponse'},
+                {data: 'status', name: 'status'},
+                {data: 'responsableDestination', name: 'responsableDestination'},
+                {data: 'responsableSource', name: 'responsableSource'},
                 {data: 'action', name: 'action', orderable: true, searchable: true},
             ],
 
@@ -396,11 +405,11 @@
         Click to Button
         --------------------------------------------
         --------------------------------------------*/
-        $('#createNewMembre').click(function () {
-            $('#saveBtn').val("create-membre");
-            $('#membre_id').val('');
-            $('#membreForm').trigger("reset");
-            $('#modelHeading').html(" Créer un nouveau Membre");
+        $('#createNewTransfert').click(function () {
+            $('#saveBtn').val("create-transfert");
+            $('#transfert_id').val('');
+            $('#transfertForm').trigger("reset");
+            $('#modelHeading').html(" Envoyer une demande de Transfert");
             $('#ajaxModel').modal('show');
         });
 
@@ -418,10 +427,10 @@
         Click to Edit Button
         --------------------------------------------
         --------------------------------------------*/
-        $('body').on('click', '.showMembre', function () {
-          var membre_id = $(this).data('id');
-          $.get("{{ route('membre.index') }}" +'/' + membre_id, function (data) {
-            
+        $('body').on('click', '.showTransfert', function () {
+          var transfert_id = $(this).data('id');
+          $.get("{{ route('transfert.index') }}" +'/' + transfert_id, function (data) {
+
             if (data.eglise) {
                 $('.nomEglise').show();
                   $('.eglise_id').text(data.eglise.nomEglise);
@@ -434,7 +443,7 @@
             $('.prenom').text(data.prenom);
             $('.sexe').text((data.sexe == 0) ? 'Femme' : 'Homme');
 
-            let dateStr = data.datenais; 
+            let dateStr = data.datenais;
             let dateParts = dateStr.split('-');
             let formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
             $('.datenais').text(formattedDate);
@@ -455,15 +464,15 @@
         --------------------------------------------
         --------------------------------------------*/
         $('body').on('click', '.addBaptism', function () {
-          var membre_id = $(this).data('id');
-          $.get("{{ route('membre.index') }}" +'/' + membre_id +'/addBaptism', function (data) {
+          var transfert_id = $(this).data('id');
+          $.get("{{ route('transfert.index') }}" +'/' + transfert_id +'/addBaptism', function (data) {
             console.log(data.nom +' '+ data.prenom);
-            
-              $('#modelHeadingBapt').html(" Ajouter un bapteme à ce Membre");
-              $('#saveBtnBapt').val("add-membre-baptism");
+
+              $('#modelHeadingBapt').html(" Ajouter un bapteme à ce Transfert");
+              $('#saveBtnBapt').val("add-transfert-baptism");
               $('#baptismModel').modal('show');
-              $('#membre_id_bapt').val(data.id);
-              $('#nomMembre').val(data.nom +' '+ data.prenom);
+              $('#transfert_id_bapt').val(data.id);
+              $('#nomTransfert').val(data.nom +' '+ data.prenom);
           })
         });
         /*------------------------------------------
@@ -472,15 +481,15 @@
         --------------------------------------------
         --------------------------------------------*/
         $('body').on('click', '.asignService', function () {
-          var membre_id = $(this).data('id');
-          $.get("{{ route('membre.index') }}" +'/' + membre_id +'/asignService', function (data) {
+          var transfert_id = $(this).data('id');
+          $.get("{{ route('transfert.index') }}" +'/' + transfert_id +'/asignService', function (data) {
             console.log(data.nom +' '+ data.prenom);
-            
-              $('#modelHeadingServ').html(" Assigner un service à ce Membre");
-              $('#saveBtnServ').val("add-membre-service");
+
+              $('#modelHeadingServ').html(" Assigner un service à ce Transfert");
+              $('#saveBtnServ').val("add-transfert-service");
               $('#serviceModel').modal('show');
-              $('#membre_id_serv').val(data.id);
-              $('#nomMembreServ').val(data.nom + (data.prenom ? ' ' + data.prenom : ''));
+              $('#transfert_id_serv').val(data.id);
+              $('#nomTransfertServ').val(data.nom + (data.prenom ? ' ' + data.prenom : ''));
             })
         });
         /*------------------------------------------
@@ -488,13 +497,13 @@
         Click to Edit Button
         --------------------------------------------
         --------------------------------------------*/
-        $('body').on('click', '.editMembre', function () {
-          var membre_id = $(this).data('id');
-          $.get("{{ route('membre.index') }}" +'/' + membre_id +'/edit', function (data) {
-                $('#modelHeading').html(" Modifier la Membre");
-                $('#saveBtn').val("edit-membre");
+        $('body').on('click', '.editTransfert', function () {
+          var transfert_id = $(this).data('id');
+          $.get("{{ route('transfert.index') }}" +'/' + transfert_id +'/edit', function (data) {
+                $('#modelHeading').html(" Modifier la Transfert");
+                $('#saveBtn').val("edit-transfert");
                 $('#ajaxModel').modal('show');
-                $('#membre_id').val(data.id);
+                $('#transfert_id').val(data.id);
                 if (data.eglise) {
                     $('#eglise_id').val(data.eglise.id);
                 }
@@ -533,10 +542,10 @@
 
         /*------------------------------------------
         --------------------------------------------
-        Create membre Code
+        Create transfert Code
         --------------------------------------------
         --------------------------------------------*/
-        $('#membreForm').submit(function(e) {
+        $('#transfertForm').submit(function(e) {
             e.preventDefault();
 
             let formData = new FormData(this);
@@ -544,17 +553,17 @@
 
             $.ajax({
                     type:'POST',
-                    url: "{{ route('membre.store') }}",
+                    url: "{{ route('transfert.store') }}",
                     data: formData,
                     contentType: false,
                     processData: false,
                     success: (response) => {
                           $('#saveBtn').html('Enregistrer');
-                          $('#membreForm').trigger("reset");
+                          $('#transfertForm').trigger("reset");
                           $('#ajaxModel').modal('hide');
-                          msg = 'Membre ajouté avec succès.';
-                          if($('#saveBtn').val() == 'edit-membre'){
-                            msg = 'Membre modifié avec succès.';
+                          msg = 'Transfert ajouté avec succès.';
+                          if($('#saveBtn').val() == 'edit-transfert'){
+                            msg = 'Transfert modifié avec succès.';
                           }
                           $(".alert-success-text").text(msg);
                           $(".alert-success").show();
@@ -562,10 +571,10 @@
                     },
                     error: function(response){
                         $('#saveBtn').html('Enregistrer');
-                        $('#membreForm').find(".print-error-msg").find("ul").html('');
-                        $('#membreForm').find(".print-error-msg").css('display','block');
+                        $('#transfertForm').find(".print-error-msg").find("ul").html('');
+                        $('#transfertForm').find(".print-error-msg").css('display','block');
                         $.each( response.responseJSON.errors, function( key, value ) {
-                            $('#membreForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
+                            $('#transfertForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
                         });
                     }
                });
@@ -573,38 +582,38 @@
         });
         /*------------------------------------------
         --------------------------------------------
-        Create membre - baptism Code
+        Create transfert - baptism Code
         --------------------------------------------
         --------------------------------------------*/
-        $('#membreBaptismForm').submit(function(e) {
+        $('#transfertBaptismForm').submit(function(e) {
             e.preventDefault();
 
             let formData = new FormData(this);
             console.log(formData);
-            
+
             $('#saveBtnBapt').html('En cours...');
 
             $.ajax({
                     type:'POST',
-                    url: "{{ route('membre.storeBaptism') }}",
+                    url: "{{ route('transfert.store') }}",
                     data: formData,
                     contentType: false,
                     processData: false,
                     success: (response) => {
                           $('#saveBtnBapt').html('Enregistrer');
-                          $('#membreBaptismForm').trigger("reset");
+                          $('#transfertBaptismForm').trigger("reset");
                           $('#baptismModel').modal('hide');
-                          msg = 'Bapteme ajouté à ce membre avec succès.';
+                          msg = 'Bapteme ajouté à ce transfert avec succès.';
                           $(".alert-success-text").text(msg);
                           $(".alert-success").show();
                           table.draw();
                     },
                     error: function(response){
                         $('#saveBtnBapt').html('Enregistrer');
-                        $('#membreBaptismForm').find(".print-error-msg").find("ul").html('');
-                        $('#membreBaptismForm').find(".print-error-msg").css('display','block');
+                        $('#transfertBaptismForm').find(".print-error-msg").find("ul").html('');
+                        $('#transfertBaptismForm').find(".print-error-msg").css('display','block');
                         $.each( response.responseJSON.errors, function( key, value ) {
-                            $('#membreBaptismForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
+                            $('#transfertBaptismForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
                         });
                     }
                });
@@ -612,38 +621,38 @@
         });
         /*------------------------------------------
         --------------------------------------------
-        Create membre - service Code
+        Create transfert - service Code
         --------------------------------------------
         --------------------------------------------*/
-        $('#membreServiceForm').submit(function(e) {
+        $('#transfertServiceForm').submit(function(e) {
             e.preventDefault();
 
             let formData = new FormData(this);
             console.log(formData);
-            
+
             $('#saveBtnServ').html('En cours...');
 
             $.ajax({
                     type:'POST',
-                    url: "{{ route('membre.storeService') }}",
+                    url: "{{ route('transfert.store') }}",
                     data: formData,
                     contentType: false,
                     processData: false,
                     success: (response) => {
                           $('#saveBtnServ').html('Enregistrer');
-                          $('#membreServiceForm').trigger("reset");
+                          $('#transfertServiceForm').trigger("reset");
                           $('#serviceModel').modal('hide');
-                          msg = 'Service assigné à ce membre avec succès.';
+                          msg = 'Service assigné à ce transfert avec succès.';
                           $(".alert-success-text").text(msg);
                           $(".alert-success").show();
                           table.draw();
                     },
                     error: function(response){
                         $('#saveBtnServ').html('Enregistrer');
-                        $('#membreServiceForm').find(".print-error-msg").find("ul").html('');
-                        $('#membreServiceForm').find(".print-error-msg").css('display','block');
+                        $('#transfertServiceForm').find(".print-error-msg").find("ul").html('');
+                        $('#transfertServiceForm').find(".print-error-msg").css('display','block');
                         $.each( response.responseJSON.errors, function( key, value ) {
-                            $('#membreServiceForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
+                            $('#transfertServiceForm').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
                         });
                     }
                });
@@ -652,24 +661,24 @@
 
         /*------------------------------------------
         --------------------------------------------
-        Delete membre Code
+        Delete transfert Code
         --------------------------------------------
         --------------------------------------------*/
-        $('body').on('click', '.deleteMembre', function () {
-            var membre_id = $(this).data("id");
-            $("#membre_id").val(membre_id);
-            $('#deleteText').text("Vous voulez vraiment supprimer ce membre?");
+        $('body').on('click', '.deleteTransfert', function () {
+            var transfert_id = $(this).data("id");
+            $("#transfert_id").val(transfert_id);
+            $('#deleteText').text("Vous voulez vraiment supprimer ce transfert?");
             $('#deleteModel').modal('show');
         });
         $('body').on('click', '#deleteBtn', function () {
-            var membre_id = $("#membre_id").val();
+            var transfert_id = $("#transfert_id").val();
 
             $.ajax({
                 type: "DELETE",
-                url: "{{ route('membre.store') }}"+'/'+membre_id,
+                url: "{{ route('transfert.store') }}"+'/'+transfert_id,
                 success: function (data) {
                     $('#deleteModel').modal('hide');
-                    $(".alert-success-text").text('Membre supprimé avec succès.');
+                    $(".alert-success-text").text('Transfert supprimé avec succès.');
                     $(".alert-success").show();
                     table.draw();
                 },
