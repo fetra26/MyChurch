@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TransfertMail;
 use App\Models\Membre;
 use App\Models\Transfert;
 use App\Models\User;
@@ -9,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Eglise;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Mail;
 
 class TransfertController extends Controller
 {
@@ -22,6 +25,10 @@ class TransfertController extends Controller
         $egliseId = $currentUser->eglise->id;
         $membres = Membre::where('id_eglise', $egliseId)->get();
         $egliseSources = Eglise::where('id','!=',$egliseId)->latest()->get();
+        $districtId = $currentUser->eglise->district->id;
+        $pasteurs = Membre::membersWithService(['Pasteur', 'Loholona'],$districtId,$egliseId);
+                        
+        // dd($pasteurs);
         if ($currentUser->hasRole(User::ROLE_ADMIN) || $currentUser->hasRole(User::ROLE_SUPER_ADMIN)) {
             if ($currentUser->eglise) {
                 if ($request->ajax()) {
@@ -61,8 +68,10 @@ class TransfertController extends Controller
                             //     return $btn;
                             })
                             ->editColumn('nomComplet', function($row) {
-                                return ($row->membre) ? (strtoupper($row->membre->nom). ($row->membre->prenom)? ' '. ucwords($row->membre->prenom) : '' ) : ucwords($row->membre_name);
-                            })
+                                return ($row->membre)
+                                ? strtoupper($row->membre->nom) . (($row->membre->prenom) ? ' ' . ucwords($row->membre->prenom) : '')
+                                : ucwords($row->membre_name);
+                                                        })
                             ->editColumn('destination', function($row) {
                                 return ($row->egliseDest) ? ucwords($row->egliseDest->nomEglise) : ucwords($row->egliseDest_name);
                             })
@@ -76,20 +85,25 @@ class TransfertController extends Controller
                                 return ($row->date_reponse_demande) ? date('d/m/Y H:i', strtotime($row->date_reponse_demande)) : '';
                             })
                             ->editColumn('status', function($row) {
-                                return ($row->status == 1) ? 'Accepté' : 'Refusé';
-                            })
+                                return match($row->status) {
+                                    0 => 'Refusé',
+                                    1 => 'En attente',
+                                    2 => 'Accepté',
+                                    default => 'Inconnu'
+                                };
+                                                            })
                             ->editColumn('responsableDestination', function($row) {
-                                return ($row->destinationResponsable) ? ucwords($row->destinationResponsable->name) : ucwords($row->source_responsable_name);
+                                return ($row->destinationResponsable) ? ucwords($row->destinationResponsable->name) : ucwords($row->destination_responsable_name);
                             })
                             ->editColumn('responsableSource', function($row) {
-                                return ($row->sourceResponsable) ? ucwords($row->sourceResponsable->name) : ucwords($row->destination_responsable_name);
+                                return ($row->sourceResponsable) ? ucwords($row->sourceResponsable->name) : ucwords($row->source_responsable_name);
                             })
                             ->rawColumns(['action'])
                             ->make(true);
                 }
             }
 
-            return view('transferts.show',compact('membres','egliseSources'));
+            return view('transferts.show',compact('membres','egliseSources','pasteurs'));
 
         }else {
             return redirect('dashboard');
@@ -109,7 +123,56 @@ class TransfertController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $currentUser = Auth::user();
+
+        if ($currentUser->hasRole(User::ROLE_ADMIN)) {
+            // dd($request);
+            $egliseDest_id = $currentUser->eglise->id;
+            $source_responsable = User::where('id_eglise',$request->egliseSource_id)->first();
+            $source_responsable_id = $source_responsable->id;
+            // $transfert = Transfert::updateOrCreate([
+
+            //     'id' => $request->transfert_id
+
+            // ],
+
+            // [
+            //     'egliseSource_id' => $request->egliseSource_id,
+            //     'egliseDest_id' => $egliseDest_id,
+            //     'membre_id' => $request->membre_id,
+            //     'destination_responsable_id' => $currentUser->id,
+            //     'source_responsable_id' => $source_responsable_id,
+            //     'destination_pstOrLhl_id' => $request->pstOrLhl_id
+            // ]);
+            if (true) {
+                $title = 'FEDERASIONA';
+                $data = [
+                    'title' => $title,
+                    'formData' => '',  // Add the form data
+                ];
+            
+                // Generate PDF (this will not download, just create it)
+                // $pdf = Pdf::loadView('transferts.model-transfert', $data);
+                // // return $pdf->download('transfert.pdf');
+                // return $pdf->stream('Taratasy fangatahana hifindra fiangonana.pdf');
+
+                // // Prepare the email data
+                $mailData = [
+                    'title' => 'This is Test Mail',
+                    // 'files' => [
+                    //     // Attach the PDF as a file to the email
+                    //     'pdf' => $pdf->output(),  // Use output() to get the PDF content as string
+                    // ],
+                ];
+            
+                // // Send the email with the PDF attachment
+                Mail::to('fabienomenjanahary@gmail.com')->send(new TransfertMail($mailData));
+            
+                // return response()->json(['success'=>'Transfert enregistré avec succès']);
+            }
+        }else {
+            return redirect('dashboard');
+        }
     }
 
     /**

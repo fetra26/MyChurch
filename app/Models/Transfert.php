@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Transfert extends Model
 {
     use HasFactory;
-    protected $fillable = ['egliseSource_id', 'egliseDest_id', 'membre_id', 'source_responsable_id', 'destination_responsable_id', 'date_reponse_demande', 'status'];
+    protected $fillable = ['egliseSource_id', 'egliseDest_id', 'membre_id', 'source_responsable_id', 'destination_responsable_id', 'date_reponse_demande', 'status','destination_pstOrLhl_id'];
 // Relationship to the source church
     public function egliseSource()
     {
@@ -33,5 +33,25 @@ class Transfert extends Model
     public function destinationResponsable()
     {
         return $this->belongsTo(User::class, 'destination_responsable_id');
+    }
+
+            /**
+     * Relationship to the destination member who is either 'Pasteur' or 'Loholona'
+     */
+    public function destinationPstOrLhl()
+    {
+        return $this->belongsTo(Membre::class, 'destination_pstOrLhl_id')->whereHas('services', function ($query) {
+            $query->whereIn('libelleServ', ['Pasteur', 'Loholona']);
+        });
+    }
+
+    /**
+     * Relationship to the source member who is either 'Pasteur' or 'Loholona'
+     */
+    public function sourcePstOrLhl()
+    {
+        return $this->belongsTo(Membre::class, 'source_pstOrLhl_id')->whereHas('services', function ($query) {
+            $query->whereIn('libelleServ', ['Pasteur', 'Loholona']);
+        });
     }
 }

@@ -54,7 +54,16 @@
                         <div class="alert alert-danger print-error-msg" style="display:none">
                             <ul></ul>
                         </div>
+                        <div class="form-group mt-2" id="statutSelect">
+                            <select class="form-select mt-1" aria-label="Default select example" id="status_id" name="status_id">
+                                <option selected value="">Choisir le statut </option>
+                                @forelse ($status as $statu)
+                                    <option value="{{$statu->id}}">{{$statu->libelleStat}}</option>
+                                @empty
 
+                                @endforelse
+                            </select>
+                        </div>
                        {{--  <div class="form-group mt-2" id="DistSelect">
                             <select class="form-select mt-1" aria-label="Default select example" id="eglise_id" name="eglise_id">
                                 <option selected value="">Choisir l'eglise</option>
@@ -128,18 +137,6 @@
                             <div class="col-sm-12">
                                 <input type="text" class="form-control" id="codePost" name="codePost" value="" maxlength="50">
                             </div>
-                        </div>
-
-                        <div class="form-group mt-1" id="statutSelect">
-
-                            <select class="form-select mt-2 mb-2" aria-label="Default select example" id="status_id" name="status_id">
-                                <option selected value="">Choisir le statut</option>
-                                @forelse ($status as $statu)
-                                    <option value="{{$statu->id}}">{{$statu->libelleStat}}</option>
-                                @empty
-
-                                @endforelse
-                            </select>
                         </div>
 
                     </div>

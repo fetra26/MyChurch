@@ -53,7 +53,7 @@
                         </div>
 
                         <div class="form-group mt-2" id="sourceSelect">
-                            <select class="form-select mt-1" aria-label="Default select example" id="egliseSource_id" name="egliseSource_id">
+                            <select class="form-select mt-1" aria-label="Default select example" id="egliseSource_id" name="egliseSource_id" required>
                                 <option selected value="">Choisir l'eglise recepteur</option>
                                 @forelse ($egliseSources as $egliseSource)
                                     <option value="{{$egliseSource->id}}">{{$egliseSource->nomEglise}}</option>
@@ -63,7 +63,7 @@
                             </select>
                         </div>
                         <div class="form-group mt-2" id="membreSelect">
-                            <select class="form-select mt-1" aria-label="Default select example" id="membre_id" name="membre_id">
+                            <select class="form-select mt-1" aria-label="Default select example" id="membre_id" name="membre_id" required>
                                 <option selected value="">Choisir le membre</option>
                                 @forelse ($membres as $membre)
                                     <option value="{{$membre->id}}">{{$membre->nom}} {{$membre->prenom}}</option>
@@ -72,83 +72,16 @@
                                 @endforelse
                             </select>
                         </div>
-                       <!-- <div class="form-group">
-                            <label for="nom" class="col-sm control-label">Nom du membre:</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="nom" name="nom" value="" maxlength="50" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="prenom" class="col-sm control-label">Prénoms du membre:</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="prenom" name="prenom" value="" maxlength="50">
-                            </div>
-                        </div>
-                        <label for="">Sexe</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="sexe" id="sexe0" value="0">
-                            <label class="form-check-label" for="sexe0">
-                              Femme
-                            </label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="radio" name="sexe" id="sexe1" value="1">
-                            <label class="form-check-label" for="sexe1">
-                              Homme
-                            </label>
-                          </div>
-                          <label for="">Date de naissance</label>
-                        <input id="datepicker" name="datenais"/>
-                        {{-- contact --}}
-                        <div class="form-group">
-                            <label for="adresse" class="col-sm control-label">Adresse:</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="adresse" name="adresse" value="" maxlength="50" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="email" class="col-sm control-label">Email:</label>
-                            <div class="col-sm-12">
-                                <input type="email" class="form-control" id="email" name="email" value="" maxlength="50">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="telMobile" class="col-sm control-label">Téléphone Mobile:</label>
-                            <div class="col-sm-12">
-                                <input type="tel" class="form-control" id="telMobile" name="telMobile" value="" maxlength="50">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="telFixe" class="col-sm control-label">Téléphone fixe:</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="telFixe" name="telFixe" value="" maxlength="50">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="BP" class="col-sm control-label">Boite postal:</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="BP" name="BP" value="" maxlength="50">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="codePost" class="col-sm control-label">Code postal:</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="codePost" name="codePost" value="" maxlength="50">
-                            </div>
-                        </div> -->
-
-                        {{-- <div class="form-group mt-1" id="statutSelect">
-
-                            <select class="form-select mt-2 mb-2" aria-label="Default select example" id="status_id" name="status_id">
-                                <option selected value="">Choisir le statut</option>
-                                @forelse ($status as $statu)
-                                    <option value="{{$statu->id}}">{{$statu->libelleStat}}</option>
+                        <div class="form-group mt-2" id="membreSelect">
+                            <select class="form-select mt-1" aria-label="Default select example" id="pstOrLhl_id" name="pstOrLhl_id" required>
+                                <option selected value="">Choisir le Pasteur/Loholona de votre Eglise </option>
+                                @forelse ($pasteurs as $pasteur)
+                                    <option value="{{$pasteur->id}}">{{$pasteur->full_name}}</option>
                                 @empty
 
                                 @endforelse
                             </select>
-                        </div> --}}
-
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success mt-2" id="saveBtn" value="create"> Envoyer
