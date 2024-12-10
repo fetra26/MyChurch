@@ -144,11 +144,18 @@ class TransfertController extends Controller
                 'destination_pstOrLhl_id' => $request->pstOrLhl_id
             ]);
             if ($transfert) {
-                $data["email"] = "fabie.lalaonantenaina@gmail.com";
+                $data["email"] = "nyaina.mirary@gmail.com";
                 $data["title"] = "Fangatahana hifindra fiangonana (Demande de Transfert)";
-                $data["body"] = "Test de transfert";
+                $data["federation"] = "Nom federation";
+                $data["church_name"] = "Nom eglise";
+                $data["date"] = "Date de demande detransfert";
+                $data["church_address"] = "Adresse eglise";
+                $data["applicant_name"] = "Nom membre";
+                $data["secretary_name"] = "secretaire";
+                $data["pastor_name"] = "pasteur";
+                $data["destination"] = "eglise dest";
             
-                $pdf = PDF::loadView('emails.transfertMail', $data);
+                $pdf = PDF::loadView('emails.transfertPdf', $data);
                 $data["pdf"] = $pdf;
     
                 try {
