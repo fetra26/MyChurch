@@ -5,6 +5,7 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -29,7 +30,7 @@ class TransfertMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Fangatahana hifindra fiangonana (Demande de Transfert)',
+            subject: $this->mailData['title'],
         );
     }
   
@@ -39,7 +40,8 @@ class TransfertMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.transfertMail'
+            view: 'emails.transfertMail',
+            with: $this->mailData
         );
     }
   
@@ -50,6 +52,9 @@ class TransfertMail extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        return [            
+            Attachment::fromData(fn () => $this->mailData['pdf']->output(), 'transfert.pdf')
+        ->withMime('application/pdf'),
+    ];
     }
 }

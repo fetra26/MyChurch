@@ -126,49 +126,38 @@ class TransfertController extends Controller
         $currentUser = Auth::user();
 
         if ($currentUser->hasRole(User::ROLE_ADMIN)) {
-            // dd($request);
             $egliseDest_id = $currentUser->eglise->id;
             $source_responsable = User::where('id_eglise',$request->egliseSource_id)->first();
             $source_responsable_id = $source_responsable->id;
-            // $transfert = Transfert::updateOrCreate([
+            $transfert = Transfert::updateOrCreate([
 
-            //     'id' => $request->transfert_id
+                'id' => $request->transfert_id
 
-            // ],
+            ],
 
-            // [
-            //     'egliseSource_id' => $request->egliseSource_id,
-            //     'egliseDest_id' => $egliseDest_id,
-            //     'membre_id' => $request->membre_id,
-            //     'destination_responsable_id' => $currentUser->id,
-            //     'source_responsable_id' => $source_responsable_id,
-            //     'destination_pstOrLhl_id' => $request->pstOrLhl_id
-            // ]);
-            if (true) {
-                $title = 'FEDERASIONA';
-                $data = [
-                    'title' => $title,
-                    'formData' => '',  // Add the form data
-                ];
+            [
+                'egliseSource_id' => $request->egliseSource_id,
+                'egliseDest_id' => $egliseDest_id,
+                'membre_id' => $request->membre_id,
+                'destination_responsable_id' => $currentUser->id,
+                'source_responsable_id' => $source_responsable_id,
+                'destination_pstOrLhl_id' => $request->pstOrLhl_id
+            ]);
+            if ($transfert) {
+                $data["email"] = "fabie.lalaonantenaina@gmail.com";
+                $data["title"] = "Fangatahana hifindra fiangonana (Demande de Transfert)";
+                $data["body"] = "Test de transfert";
             
-                // Generate PDF (this will not download, just create it)
-                // $pdf = Pdf::loadView('transferts.model-transfert', $data);
-                // // return $pdf->download('transfert.pdf');
-                // return $pdf->stream('Taratasy fangatahana hifindra fiangonana.pdf');
-
-                // // Prepare the email data
-                $mailData = [
-                    'title' => 'This is Test Mail',
-                    // 'files' => [
-                    //     // Attach the PDF as a file to the email
-                    //     'pdf' => $pdf->output(),  // Use output() to get the PDF content as string
-                    // ],
-                ];
-            
-                // // Send the email with the PDF attachment
-                Mail::to('fabie.lalaonantenaina@gmail.com')->send(new TransfertMail($mailData));
-            
-                // return response()->json(['success'=>'Transfert enregistré avec succès']);
+                $pdf = PDF::loadView('emails.transfertMail', $data);
+                $data["pdf"] = $pdf;
+    
+                try {
+                    Mail::to($data["email"])->send(new TransfertMail($data));
+                    return response()->json(['success'=>'Transfert enregistré et envoyé avec succès']);
+                } catch (\Throwable $th) {
+                    dd($th);
+                    //throw $th;
+                }
             }
         }else {
             return redirect('dashboard');
