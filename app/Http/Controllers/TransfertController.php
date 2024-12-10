@@ -166,7 +166,7 @@ class TransfertController extends Controller
                 ];
             
                 // // Send the email with the PDF attachment
-                Mail::to('fabienomenjanahary@gmail.com')->send(new TransfertMail($mailData));
+                Mail::to('fabie.lalaonantenaina@gmail.com')->send(new TransfertMail($mailData));
             
                 // return response()->json(['success'=>'Transfert enregistré avec succès']);
             }

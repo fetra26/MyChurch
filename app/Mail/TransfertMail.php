@@ -29,7 +29,7 @@ class TransfertMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Transfert Mail',
+            subject: 'Fangatahana hifindra fiangonana (Demande de Transfert)',
         );
     }
   
